@@ -1,0 +1,310 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+.app {
+
+width: 100%;
+height: 100vh;
+background-image: linear-gradient(rgb(58, 32, 61), rgb(165, 73, 177));
+display: flex;
+justify-content: center;
+font-family: "JetBrains Mono";
+display: flex;
+flex-direction: column;
+overflow: hidden;
+
+
+}
+
+header {
+  height: 60px;
+  margin: auto;
+}
+
+menu {
+  background-color: #23232B;
+  width: 350px;
+  height: 40px;
+  border: 1px solid white;
+  border-radius: 60%;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  
+}
+
+
+
+.nav {
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 328px;
+  height: 30px;
+  font-size: 12px;
+  color: white;
+  
+}
+
+.menudropdonw{
+
+  width: auto;
+  height: auto;
+  padding-left: 0px;
+}
+
+
+
+.menudropdonw:hover > .opcoes{
+  display: block;
+ 
+
+
+
+}
+
+.opcoes {
+  display: none;
+  width: 170px;
+  height: auto;
+  position: absolute;
+  color: white;
+  background-color: #5B3667;
+  border: 1px solid black;
+  text-decoration: none;
+  top: 60px;
+  z-index: 2;
+}
+
+.opcoes > li {
+  
+  list-style-type: none;
+  border: 1px solid #23232B;
+  text-align: center;
+}
+
+.opcoes > li:hover {
+
+  background-color: #23232B;
+}
+
+
+/*Sobre*/
+
+.body {
+ 
+  height: auto;
+  margin: auto;
+}
+
+.sobre
+
+{
+  width: 100%;
+  height: 206px;
+  display: flex;
+  padding-top:40px ;
+
+}
+
+.caixafotoperfil {
+
+  width: 167px;
+  height: 188px;
+  border-radius: 50%;
+  background-image: url('/public/perfil.png' );
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.fotodoperfil {
+  width: 167px;
+  height: 188px;
+  margin-left: -8px;
+  z-index: 1;
+}
+
+
+.textoperfil {
+
+  width: 247px;
+  height: 150px;
+  border: 1px solid #FFF279;
+  background-color: #FFF279;
+  margin-left: -43px;
+  
+  
+
+}
+.textoperfil h1 {
+  text-align: center;
+  width: 178px;
+  margin-left: 43px;
+  font-size: 9px;
+  text-align: right;
+  font-family: "JetBrains Mono";
+  
+}
+
+.textoperfil h2 {
+  text-align: center;
+  font-size: 13px;
+  margin: 0px;
+  font-family: "JetBrains Mono";
+  margin-top: 20px;
+  margin-left: 20px;
+  
+  
+}
+
+
+/*Projetos*/
+
+.tituloprojetos {
+  font-family: "JetBrains Mono";
+  font-size: 24px;
+  background-color: whitesmoke;
+  width: 80%;
+  border: #23232B double 1px;
+
+
+}
+
+
+.projetos {
+
+  width: 100%;
+  height: 50vh;
+  text-align: center;
+  overflow: hidden;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+ 
+}
+
+.projetos .slider {
+
+  position: absolute;
+  width: 200px;
+  height: 250px;
+  top: 25%;
+  left: calc(50% - 100px); 
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+  animation: autoRun 40s linear infinite;
+
+}
+
+.slider:hover{
+
+
+  animation-play-state: paused!important;
+ 
+}
+
+.slider:hover .projeto{
+
+
+ filter: grayscale(1);
+ 
+}
+
+.slider .projeto:hover {
+
+  filter: grayscale(0);
+  scale: 1.1;
+}
+
+
+
+
+@keyframes autoRun {
+
+  from {
+    transform: perspective(1000px) rotateX rotateY(0deg);
+      }
+      to {
+
+        transform: perspective(1000px) rotateY(360deg);
+      }
+}
+
+.projetos .slider .projeto {
+  position: absolute;
+  inset: 0 0 0 0;
+  transition: filter 0.5s, scale 0.5s;
+
+  transform: rotateY(calc((var(--position) - 1) * (360deg / var(--quantity)))) translateZ(220px);
+}
+
+
+
+.projetos .slider .projeto img {
+
+  width: 100%;
+  height: 100%;
+  object-fit: cover ;
+}
+
+
+/*SLIDER*/
+
+
+
+
+button {
+  all: unset;
+  z-index: 1;
+}
+
+.botaoesquerdo {
+
+  margin-right: -10px;
+}
+
+.botaodireito {
+
+  margin-left: -10px;
+
+}
+
+
+
+.footer {
+  margin: auto;
+}
+
+.contato {
+  background-color: #23232B;
+  width: 350px;
+  height: 40px;
+  border: 1px solid white;
+  border-radius: 60%;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+}
+
+
+.contato > nav {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 350px;
+  height: 30px;
+  font-size: 12px;
+  color: white;
+}
+
+.botaovoltar {
+
+  margin-top: 40px;
+  margin-bottom: 20px;
+  text-align: center;
+}
