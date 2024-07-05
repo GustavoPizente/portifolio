@@ -12,9 +12,11 @@ function Main() {
   return (
     <body className="body">
       <div className="sobre">
-        {/*<img src="/FotoSobre.png" alt="fotodoperfil" className="fotodoperfil" />*/}
 
-        <div className="caixafotoperfil"></div>
+        <div className="caixafotoperfil">
+
+
+        </div>
 
         <div className="textoperfil">
           <h2>let GustavoPizenteNazarine =</h2>
