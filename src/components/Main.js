@@ -3,11 +3,11 @@ import React from "react";
 function Main() {
   let rotation = 0;
 
-  function setSlideIndex() {
+ {/*} function setSlideIndex() {
     const slider = document.querySelector(".slider");
     rotation += 30;
-    slider.style.transform = `rotateY(${rotation}deg) perspective(1000px)`;
-  }
+    slider.style.transform = `rotateY(${rotation}deg) perspective(1000px)`; 
+  }*/}
 
   return (
     <body className="body">
@@ -23,7 +23,9 @@ function Main() {
           <h1>
             'Apaixonado por criar experiências marcantes e ajudar empresas a se
             conectarem com seu público através da sua marca digital. Estudante
-            de Design Gráfico e Programador';
+            de Design Gráfico e Desenvolvedor Front-
+            end Reactjs/CSS/HTML5/JavaScript/Figma/
+            Nestjs/MySQL/' ;
           </h1>
         </div>
       </div>
