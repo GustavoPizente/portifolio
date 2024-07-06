@@ -21,10 +21,8 @@ function Main() {
         <div className="textoperfil">
           <h2>let GustavoPizenteNazarine =</h2>
           <h1>
-            'Apaixonado por criar experiências marcantes e ajudar empresas a se
-            conectarem com seu público através da sua marca digital. Estudante
-            de Design Gráfico e Desenvolvedor Front-
-            end Reactjs/CSS/HTML5/JavaScript/Figma/
+            'Estudante
+            de Design Gráfico e Desenvolvedor Front-end Reactjs/CSS/HTML5/JavaScript/Figma/
             Nestjs/MySQL/' ;
           </h1>
         </div>
