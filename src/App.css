@@ -109,7 +109,7 @@ a {
   position: absolute;
   top: 14%;
   width: 85%;
-  height: 20%;
+  height: 24%;
   background-image: url("/public/padroes.png");
  background-blend-mode: overlay;
   animation: gradientAnimation 5s linear infinite;
