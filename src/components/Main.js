@@ -1,44 +1,77 @@
-import React from "react";
+import React, { useState } from "react";
 import { register } from "swiper/element";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import "swiper/css/effect-coverflow"
+import "swiper/css/effect-coverflow";
+import Modal from "react-modal";
 
-import { EffectCoverflow,Pagination } from "swiper/modules";
+import { EffectCoverflow, Pagination } from "swiper/modules";
 
+Modal.setAppElement("#root");
 
 register();
 
 function Main() {
   const data = [
-    { id: "1", image: "camboimMain.png", link: "https://www.camboimbiojoias.com/" },
-    { id: "2", image: "PindoramaMain.jpeg", link: "https://arvores-de-pindorama.vercel.app/" },
-    { id: "3", image: "portifolio.jpeg", link: "https://portifolio-seven-steel.vercel.app/" },
-    { id: "4", image: "figma.jpeg", link: "https://www.figma.com/proto/rGb4fwf15QZub6A3EewlH2/Untitled?page-id=0%3A1&node-id=201-40&viewport=296%2C-51%2C0.37&t=Jo9fsRVHJQrv06Zd-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=201%3A40" },
+    {
+      id: "1",
+      image: "PindoramaMain.jpeg",
+      link: "https://arvores-de-pindorama.vercel.app/",
+      text: "(Em construção, falta o deploy do back-end que já está no GitHub) Este projeto fez parte dos meus estudos sobre consumo de API e programação de back-end. Utilizei Axios para fazer as requisições para o back-end desenvolvido em Nest.js, que, por sua vez, utilizou TypeORM para se comunicar com o banco de dados MySQL. O deploy foi realizado na Vercel."
+    },
+    {
+      id: "2",
+      image: "camboimMain.png",
+      link: "https://www.camboimbiojoias.com/",
+      text: "(Ver Versão Mobile) Primeira experiência como Front-end. Foi um período de muito estudo e dedicação para colocar em prática os conhecimentos de design. Devido às limitações da plataforma Wix, todo o projeto foi desenvolvido em um único bloco de HTML, CSS e JavaScript. Além disso, utilizei o Figma para a prototipagem."
+    },
+    {
+      id: "3",
+      image: "portifolio.jpeg",
+      link: "https://portifolio-seven-steel.vercel.app/",
+      text: "Este é o portfólio que você está visitando :) Aqui, tive mais liberdade para criar, mas sempre com o foco nos objetivos de um portfólio: clareza e objetividade. O trabalho busca a simplicidade para que o usuário seja conduzido pelo contraste até o objeto principal, sem deixar de observar detalhes importantes do front-end, como a animação de background e a navegabilidade com o slider feito com a biblioteca Swiper."
+    },
+    {
+      id: "4",
+      image: "figma.jpeg",
+      link: "https://www.figma.com/proto/rGb4fwf15QZub6A3EewlH2/Untitled?page-id=0%3A1&node-id=201-40&viewport=296%2C-51%2C0.37&t=Jo9fsRVHJQrv06Zd-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=201%3A40",
+      text: "Aqui, a ideia é deixar protótipos e desenhos feitos no Figma."
+    },
   ];
+  
+  /*SET STATE DO MODAL*/
+  const [modalisOpen, setModalIsOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState(null);
 
-  {
-    /*} function setSlideIndex() {
-    const slider = document.querySelector(".slider");
-    rotation += 30;
-    slider.style.transform = `rotateY(${rotation}deg) perspective(1000px)`; 
-  }*/
-  }
+  const openModal = (item) => {
+    setActiveItem(item);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setActiveItem(null);
+  };
+
+  /*SET STATE DO MODAL*/
+
 
   return (
     <body className="body">
       <div className="sobre">
+        <div className="fundo">
+          <img className="fundoquadro" src="fundo.png"></img>
+        </div>
 
-        <div className="fundo"><img className="fundoquadro"  src="fundo.png"></img></div>
         <div className="caixafotoperfil"></div>
 
         <div className="textoperfil">
           <h2>let GustavoPizenteNazarine =</h2>
           <h1>
             'Estudante de Design Gráfico e Desenvolvedor Front-end
-            Reactjs/CSS/HTML5/JavaScript/Figma/ Nestjs/MySQL/' ;
+            Reactjs/CSS/HTML5/JavaScript/<p>Figma/ Nestjs/MySQL/';</p>
           </h1>
         </div>
       </div>
@@ -46,20 +79,17 @@ function Main() {
       <div className="projetos">
         <h2 className="tituloprojetos">PROJETOS</h2>
 
-       
-
         <Swiper
-          effect={'coverflow'}
+          effect={"coverflow"}
           grabCursor={true}
           centeredSlides={true}
-          slidesPerView={'auto'}
+          slidesPerView={"auto"}
           coverFlowEffect={{
-            rotate:50,
-            stretch:0,
-            depth:100,
-            modifier:1,
-            slidesShadows:true,
-
+            rotate: 50,
+            stretch: 0,
+            depth: 100,
+            modifier: 1,
+            slidesShadows: true,
           }}
           pagination={true}
           scrollbar={{ draggable: true }}
@@ -68,9 +98,22 @@ function Main() {
         >
           {data.map((item) => (
             <SwiperSlide key={item.id}>
-                 <a href={item.link} target="_blank" rel="noopener noreferrer">
-                <img src={item.image} alt="slider" className="slide-item" />
-              </a>
+              <button onClick={()=>openModal(item)}>
+                <img src={item.image} alt={`Imagem${item.id}`} className="slide-item" />
+              </button>
+              <Modal isOpen={modalisOpen} onRequestClose={closeModal} overlayClassName="modal-overlay"
+        className="modal-content">
+                
+
+             {activeItem && (
+          <div className="modal">
+            <p>{activeItem.text} <p>Acesse </p> <a href={activeItem.link}>CLICANDO AQUI</a></p>
+            <button onClick={closeModal}>Fechar</button>
+          </div>
+        )}
+              </Modal>
+             
+
             </SwiperSlide>
           ))}
         </Swiper>
