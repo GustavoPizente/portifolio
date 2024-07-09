@@ -30,6 +30,8 @@ function Main() {
   return (
     <body className="body">
       <div className="sobre">
+
+        <div className="fundo"><img className="fundoquadro"  src="fundo.png"></img></div>
         <div className="caixafotoperfil"></div>
 
         <div className="textoperfil">
@@ -59,9 +61,9 @@ function Main() {
             slidesShadows:true,
 
           }}
-          navigation={true}
+          pagination={true}
           scrollbar={{ draggable: true }}
-          modules={[EffectCoverflow]}
+          modules={[EffectCoverflow, Pagination]}
           className="swiper"
         >
           {data.map((item) => (

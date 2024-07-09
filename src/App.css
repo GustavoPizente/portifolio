@@ -14,12 +14,13 @@
 
 header {
   height: 60px;
-  margin: auto;
+  display: flex;
+  justify-content: center;
 }
 
 menu {
   background-color: #3d203d;
-  width: 350px;
+  width: 500px;
   height: 40px;
   padding: 0px;
   display: flex;
@@ -58,7 +59,7 @@ menu {
   border: 1px solid black;
   text-decoration: none;
   top: 60px;
-  z-index: 2;
+  z-index: 20;
 
   list-style-type: none;
   padding: 0;
@@ -104,6 +105,92 @@ a {
   width: 90%;
   display: flex;
 }
+.fundo {
+  position: absolute;
+  top: 14%;
+  width: 85%;
+  height: 20%;
+  background-image: url("/public/padroes.png");
+ background-blend-mode: overlay;
+  animation: gradientAnimation 5s linear infinite;
+}
+
+
+@media (min-width: 380px) {
+  .fundo {
+    width: 75%;
+  }
+}
+@media (min-width: 460px) {
+  .fundo {
+    width: 65%;
+  }
+}
+@media (min-width: 560px) {
+  .fundo {
+    width: 55%;
+  }
+}
+@media (min-width: 660px) {
+  .fundo {
+    width: 50%;
+  }
+}
+@media (min-width: 750px) {
+  .fundo {
+    width: 45%;
+  }
+}
+@media (min-width: 860px) {
+  .fundo {
+    width: 35%;
+  }
+}
+@media (min-width: 960px) {
+  .fundo {
+    width: 25%;
+  }
+}
+@media (min-width: 1450px) {
+  .fundo {
+    width: 20%;
+  }
+}
+@media (min-width: 1750px) {
+  .fundo {
+    width: 17%;
+  }
+}
+
+@media (min-width: 2000px) {
+  .fundo {
+    width: 15%;
+  }
+}
+@media (min-width: 2200px) {
+  .fundo {
+    width: 13%;
+  }
+}
+
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 0%; } /* Inicia na posição superior esquerda */
+  100% { background-position: 200% 200%; } /* Move para a posição inferior direita */
+}
+
+.fundoquadro {
+  position: relative;
+  width: 102%;
+  height: 40%;
+  right: 1%;
+  bottom: 1%;
+  height: 102%;
+}
+
+
+
+
 
 .caixafotoperfil {
   width: 130px;
@@ -113,6 +200,7 @@ a {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  z-index: 10;
 }
 
 .textoperfil {
@@ -121,6 +209,7 @@ a {
   border: 1px solid #fff279;
   background-color: #fff279;
   margin-left: -43px;
+  z-index: 10;
 }
 .textoperfil h1 {
   text-align: center;
@@ -192,15 +281,20 @@ button {
     border-radius: 2%;
 }
 
+.swiper-pagination-bullet {
+  background-color: #ff0000;
+}
 /*Swiper*/
 
 .footer {
-  margin: auto;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2%;
 }
 
 .contato {
   background-color: #3d203d;
-  width: 350px;
+  width: 500px;
   height: 40px;
   padding: 0px;
   display: flex;
