@@ -118,6 +118,9 @@ function Main() {
           ))}
         </Swiper>
       </div>
+      <a href="\GustavoPizenteNazarine.pdf" download>
+      <button>Baixar Currículo</button>
+      </a>
     </body>
   );
 }
