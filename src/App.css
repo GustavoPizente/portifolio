@@ -204,6 +204,7 @@ a {
   background-position: center;
   background-repeat: no-repeat;
   z-index: 10;
+  margin-right: 24px;
 }
 
 .textoperfil {
