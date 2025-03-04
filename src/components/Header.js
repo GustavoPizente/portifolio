@@ -24,7 +24,7 @@ function Header() {
                   </li>
                   <li>
                     <a
-                      href="https://arvores-de-pindorama.vercel.app/"
+                      href="https://arvores-de-pindorama.vercel.app/" 
                       target="_blank"
                       rel="noopener noreferrer"
                       className="itemopcoes"

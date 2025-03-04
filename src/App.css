@@ -199,9 +199,9 @@ a {
   width: 130px;
   height: 148px;
   border-radius: 50%;
-  background-image: url("/public/perfil.jpeg");
+  background-image: url("/public/perfil.png");
   background-size: cover;
-  background-position: center;
+  background-position: center; 
   background-repeat: no-repeat;
   z-index: 10;
   margin-right: 24px;

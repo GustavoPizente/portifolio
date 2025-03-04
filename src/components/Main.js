@@ -17,7 +17,7 @@ function Main() {
   const data = [
     {
       id: "1",
-      image: "PindoramaMain.jpeg",
+      image: "PindoramaMain.jpeg", 
       link: "https://arvores-de-pindorama.vercel.app/",
       text: "(Em construção, falta o deploy do back-end que já está no GitHub) Este projeto fez parte dos meus estudos sobre consumo de API e programação de back-end. Utilizei Axios para fazer as requisições para o back-end desenvolvido em Nest.js, que, por sua vez, utilizou TypeORM para se comunicar com o banco de dados MySQL. O deploy foi realizado na Vercel."
     },
