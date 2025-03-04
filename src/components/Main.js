@@ -24,7 +24,7 @@ function Main() {
     {
       id: "2",
       image: "camboimMain.png",
-      link: "https://www.camboimbiojoias.com/",
+      link: "https://camboim-biojoias-git-master-gustavopizentes-projects.vercel.app/",
       text: "(Ver Versão Mobile) Primeira experiência como Front-end. Foi um período de muito estudo e dedicação para colocar em prática os conhecimentos de design. Devido às limitações da plataforma Wix, todo o projeto foi desenvolvido em um único bloco de HTML, CSS e JavaScript. Além disso, utilizei o Figma para a prototipagem."
     },
     {
@@ -119,7 +119,7 @@ function Main() {
           ))}
         </Swiper>
       </div>
-      <a href="\GustavoPizenteNazarine.pdf" download>
+      <a href="\GustavoPizenteNazarine25.pdf" download>
       <button>Baixar Currículo</button>
       </a>
     </body>
