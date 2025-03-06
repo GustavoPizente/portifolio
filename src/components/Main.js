@@ -19,7 +19,7 @@ function Main() {
       id: "1",
       image: "PindoramaMain.jpeg", 
       link: "https://arvores-de-pindorama.vercel.app/",
-      text: "(MPV pronto. Apenas Mobile No Momento.falta o deploy do back-end que já está no GitHub) Este projeto fez parte dos meus estudos sobre consumo de API e programação de back-end. Utilizei Axios para fazer as requisições para o back-end desenvolvido em Nest.js, que, por sua vez, utilizou TypeORM para se comunicar com o banco de dados MySQL. O deploy foi realizado na Vercel. Agora Refatoranto tudo."
+      text: "(Apenas Mobile No Momento. Falta o deploy do back-end que já está no GitHub) Este projeto fez parte dos meus estudos sobre consumo de API e programação de back-end. Utilizei Axios para fazer as requisições para o back-end desenvolvido em Nest.js, que, por sua vez, utilizou TypeORM para se comunicar com o banco de dados MySQL. O deploy foi realizado na Vercel. Agora Refatoranto tudo."
     },
     {
       id: "2",
@@ -31,7 +31,7 @@ function Main() {
       id: "3",
       image: "portifolio.jpeg",
       link: "https://portifolio-seven-steel.vercel.app/",
-      text: "Este é o portfólio que você está visitando :) é meu último trabalho. Aqui, tive mais liberdade para criar, mas sempre com o foco nos objetivos de um portfólio: clareza e objetividade. O trabalho busca a simplicidade para que o usuário seja conduzido pelo contraste até o objeto principal, sem deixar de observar detalhes importantes do front-end, como a animação de background e a navegabilidade com o slider feito com a biblioteca Swiper."
+      text: "Este é o portfólio que você está visitando :) É meu último trabalho. Aqui, tive mais liberdade para criar, mas sempre com o foco nos objetivos de um portfólio: clareza e objetividade. O trabalho busca a simplicidade para que o usuário seja conduzido pelo contraste até o objeto principal, sem deixar de observar detalhes importantes do front-end, como a animação de background e a navegabilidade com o slider feito com a biblioteca Swiper."
     },
     {
       id: "4",
