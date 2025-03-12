@@ -34,7 +34,13 @@ function Main() {
       text: "Este é o portfólio que você está visitando :) É meu último trabalho. Aqui, tive mais liberdade para criar, mas sempre com o foco nos objetivos de um portfólio: clareza e objetividade. O trabalho busca a simplicidade para que o usuário seja conduzido pelo contraste até o objeto principal, sem deixar de observar detalhes importantes do front-end, como a animação de background e a navegabilidade com o slider feito com a biblioteca Swiper."
     },
     {
-      id: "4",
+    id: "4",
+    image: "Buscar.jpeg",
+    link: "https://viver-perto.vercel.app/",
+    text: "Todos querem viver perto daquilo que te faz bem e essa aplicação te mostra a praia mais perto da cidade informada. O usuário  digita o nome da cidade aonde vive e o mapa vai até lá. Em seguida ele voa até a cidade mais próxima e exibe uma segunda tela que mostra um texto encantador sobre a cidade e faz uma chamada para o mercado imobiliário "
+  },
+    {
+      id: "5",
       image: "figma.jpeg",
       link: "https://www.figma.com/proto/P72HIvGcReBPwAnpn6cl5J/Untitled?page-id=217%3A81&node-id=217-205&viewport=146%2C380%2C0.9&t=VLDV391r7R6q4Nvi-1&scaling=min-zoom&content-scaling=fixed",
       text: "Aqui, a ideia é deixar protótipos e desenhos feitos no Figma."
