@@ -187,8 +187,8 @@ a {
 
 
 .caixafotoperfil {
-  width: 60px;
-  height: 48px;
+  width: 80px;
+  height: 68px;
   border-radius: 50%;
   background-image: url("/public/perfil.png");
   background-size: cover;

@@ -78,7 +78,6 @@ function Main() {
     <body className="body">
       <div className="sobre">
         <div className="fundo">
-          <img className="fundoquadro" src="fundo.png"></img>
         </div>
 
         <div className="caixafotoperfil"></div>
