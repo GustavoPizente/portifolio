@@ -36,21 +36,28 @@ function Main() {
     text: "(Projeto de 1 dia para teste) Todos querem viver perto daquilo que te faz bem e essa aplicação te mostra a praia mais perto da cidade informada. O usuário  digita o nome da cidade aonde vive e o mapa vai até lá. Em seguida ele voa até a cidade mais próxima e exibe uma segunda tela que mostra um texto encantador sobre a cidade e faz uma chamada para o mercado imobiliário "
      
     },
-    {
+     {
       id: "4",
+      image: "Podas&Jardinagem.jpeg",
+    link: "https://podas-jardinagem.vercel.app/",
+    text: "Projeto para link do Mapa do Google, aqui com o objetivo de um cartão virtual com o botão de chamada bem claro e centralizado e slider interativo mostrando os trabalhos."
+     
+    },
+    {
+      id: "5",
       image: "portifolio.jpeg",
       link: "https://portfolio-gustavonazarine.vercel.app/",
       text: "Este é o portfólio que você está visitando :) É meu último trabalho. Aqui, tive mais liberdade para criar, mas sempre com o foco nos objetivos de um portfólio: clareza e objetividade. O trabalho busca a simplicidade para que o usuário seja conduzido pelo contraste até o objeto principal, sem deixar de observar detalhes importantes do front-end, como a animação de background e a navegabilidade com o slider feito com a biblioteca Swiper."
     },
     {
-    id: "5",
+    id: "6",
     image: "PindoramaMain.jpeg", 
       link: "https://arvores-de-pindorama.vercel.app/",
       text: "(Apenas Mobile No Momento. Falta o deploy do back-end que já está no GitHub) Este projeto fez parte dos meus estudos sobre consumo de API e programação de back-end. Utilizei Axios para fazer as requisições para o back-end desenvolvido em Nest.js, que, por sua vez, utilizou TypeORM para se comunicar com o banco de dados MySQL. O deploy foi realizado na Vercel. Agora Refatoranto tudo."
     
   },
     {
-      id: "6",
+      id: "7",
       image: "figma.jpeg",
       link: "https://www.figma.com/proto/P72HIvGcReBPwAnpn6cl5J/Untitled?page-id=217%3A81&node-id=217-205&viewport=146%2C380%2C0.9&t=VLDV391r7R6q4Nvi-1&scaling=min-zoom&content-scaling=fixed",
       text: "Aqui, a ideia é deixar protótipos e desenhos feitos no Figma."
@@ -86,7 +93,7 @@ function Main() {
           <h2>let GustavoPizenteNazarine =</h2>
           <h1>
             'Desenvolvedor Front-end e Estudante de Design Gráfico
-            Reactjs/CSS/HTML5/JavaScript/<p>Figma/Nestjs/MySQL/';</p>
+            Reactjs/CSS/HTML5/JavaScript/<p>Figma/Nestjs/SQL/Blender/Three.js';</p>
           </h1>
          
         </div>
