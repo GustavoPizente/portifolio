@@ -84,16 +84,16 @@ function Main() {
   return (
     <body className="body">
       <div className="sobre">
-        <div className="fundo">
-        </div>
+        
 
         <div className="caixafotoperfil"></div>
 
         <div className="textoperfil">
           <h2>let GustavoPizenteNazarine =</h2>
           <h1>
-            'Desenvolvedor Front-end e Estudante de Design Gráfico
-            Reactjs/CSS/HTML5/JavaScript/<p>Figma/Nestjs/SQL/Blender/Three.js';</p>
+            
+            <p>'Desenvolvedor Front-end e Estudante de Design Gráfico</p> 
+            Reactjs/Nextjs/CSS/HTML5/JavaScript Figma/Nestjs/SQL/Blender/Three.js';
           </h1>
          
         </div>

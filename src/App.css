@@ -54,8 +54,8 @@ menu {
   width: 170px;
   height: auto;
   position: absolute;
-  color: white;
-  background-color: #5b3667;
+  color:black;
+  background-color: #FCFDB4;
   border: 1px solid black;
   text-decoration: none;
   z-index: 20;
@@ -82,7 +82,7 @@ a {
 
 .opcoes > li > a {
   text-decoration: none;
-  color: white;
+  color: black;
   display: block;
   padding: 10px;
 }
@@ -104,78 +104,7 @@ a {
 .sobre {
   width: 90%;
   display: flex;
-}
-.fundo {
-  position: absolute;
-  left: 10%;
-  width: 85%;
-  height: 24%;
-  background-blend-mode: overlay;
-  background-size: 200% 200%; /* Ajuste o tamanho do background */
-  animation: gradientAnimation 20s ease-in-out infinite;
-}
-
-@keyframes gradientAnimation {
-  0% { background-position: 0% 0%; }
-  50% { background-position: 100% 100%; }
-  100% { background-position: 200% 200%; }
-}
-
-@media (min-width: 380px) {
-  .fundo {
-    width: 75%;
-  }
-}
-@media (min-width: 460px) {
-  .fundo {
-    width: 65%;
-  }
-}
-@media (min-width: 560px) {
-  .fundo {
-    width: 55%;
-  }
-}
-@media (min-width: 660px) {
-  .fundo {
-    width: 50%;
-  }
-}
-@media (min-width: 750px) {
-  .fundo {
-    width: 45%;
-  }
-}
-@media (min-width: 860px) {
-  .fundo {
-    width: 35%;
-  }
-}
-@media (min-width: 960px) {
-  .fundo {
-    width: 25%;
-  }
-}
-@media (min-width: 1450px) {
-  .fundo {
-    width: 20%;
-  }
-}
-@media (min-width: 1750px) {
-  .fundo {
-    width: 17%;
-  }
-}
-
-@media (min-width: 2000px) {
-  .fundo {
-    width: 15%;
-  }
-}
-@media (min-width: 2200px) {
-  .fundo {
-    width: 13%;
-  }
+  justify-content: center;
 }
 
 
@@ -199,27 +128,27 @@ a {
 }
 
 .textoperfil {
-  width: 247px;
-  height: 100px;
+  width: 30vh;
+  height: 15vh;
   background-color: #a6d9e0;
   margin-left: -43px;
 }
 .textoperfil p {
 
-  margin: 0;
+  margin-left: 3%;
 }
 .textoperfil h1 {
   text-align: center;
-  width: 190px;
-  margin-left: 10px;
-  font-size:10px;
+  width: 216px;
+  margin-left: 12px;
+  font-size:11px;
   text-align: right;
   font-family: "JetBrains Mono";
 }
 
 .textoperfil h2 {
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
   margin: 0px;
   font-family: "JetBrains Mono";
   margin-top: 10px;
@@ -231,7 +160,7 @@ a {
 .tituloprojetos {
   font-family: "JetBrains Mono";
   font-size: 20px;
-  background-color: whitesmoke;
+  background-color:#f8f9cc;
   width: 70%;
   border: #23232b double 1px;
    
@@ -239,7 +168,7 @@ a {
 }
 
 .projetos {
-  width: 100%;
+  width: 45vh;
   height: 55vh;
   text-align: center;
   overflow: hidden;
@@ -282,6 +211,14 @@ button {
   background-color: #ff0000;
 }
 
+@media (min-width: 1300px) {
+  
+  .projetos{
+    width: 95vh;
+    
+  }
+}
+
 
 /* MODAIS */
 
@@ -308,8 +245,8 @@ button {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.25);
+  bottom: 0vh;
+  background-color: rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -317,7 +254,7 @@ button {
 }
 
 .modal-content {
-  bottom: 15%;
+  bottom: 25%;
     position: absolute;
   background: white;
   padding: 20px;
@@ -326,6 +263,7 @@ button {
   height: 380px;
   max-width: 80%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
 }
 
 .modal p {
@@ -339,14 +277,14 @@ button {
  color: black;
  border: 1px solid;
     margin: 10px;
-    background-color: #9cff7940;
+    background-color: #FCFDB4;
 
 }
 
 .modal button {
-  background-color: #922c8d;
-  color: white;
-  border: none;
+  background-color: #B9DBDF;
+  color: black;
+  border: 1px solid black;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
