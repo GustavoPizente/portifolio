@@ -74,6 +74,12 @@ const Slider = () => {
             id="slide4"
           />
 
+           <img 
+            src="#" 
+            class="mySlides"
+            id="slide5"
+          />
+
          <button className="botaodireito" onClick={() =>  setSlideIndex(slideIndex+1)}><svg width="44" height="74" viewBox="0 0 44 74" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M3 3L39 36.5L3 71.5" stroke="black" stroke-width="6"/>
 </svg></button>
