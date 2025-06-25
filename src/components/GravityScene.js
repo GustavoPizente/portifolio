@@ -103,91 +103,100 @@ export default function GravityScene() {
 
     const frontBoxes = [];
 
-    const BASKET_SCALE_FACTOR = 4;
-    const wallThicknessMultiplier = 0.2;
-    const floorThicknessMultiplier = 0.2;
+const BASKET_SCALE_FACTOR = 4;
+const wallThicknessMultiplier = 0.2;
+const floorThicknessMultiplier = 0.2;
 
-    const basketLoader = new GLTFLoader();
-    basketLoader.load(
-      '/cesto.glb',
-      (gltf) => {
-        const cestoModel = gltf.scene;
-        cestoModel.scale.set(BASKET_SCALE_FACTOR, BASKET_SCALE_FACTOR, BASKET_SCALE_FACTOR);
-        
-        const bbox = new THREE.Box3().setFromObject(cestoModel);
-        const visualModelWidth = bbox.max.x - bbox.min.x;
-        const visualModelHeight = bbox.max.y - bbox.min.y;
-        const visualModelDepth = bbox.max.z - bbox.min.z;
+const basketLoader = new GLTFLoader();
+basketLoader.load(
+  '/cesto.glb',
+  (gltf) => {
+    const cestoModel = gltf.scene;
+    cestoModel.scale.set(BASKET_SCALE_FACTOR, BASKET_SCALE_FACTOR, BASKET_SCALE_FACTOR);
+    
+    const bbox = new THREE.Box3().setFromObject(cestoModel);
+    const visualModelWidth = bbox.max.x - bbox.min.x;
+    const visualModelHeight = bbox.max.y - bbox.min.y;
+    const visualModelDepth = bbox.max.z - bbox.min.z;
 
-        const visualModelBaseY = bbox.min.y ; 
+    const visualModelBaseY = bbox.min.y; 
 
-        const actualBasketWidth = visualModelWidth;
-        const actualBasketHeight = visualModelHeight;
-        const actualBasketDepth = visualModelDepth;
+    const actualBasketWidth = visualModelWidth;
+    const actualBasketHeight = visualModelHeight;
+    const actualBasketDepth = visualModelDepth;
 
-        const wallThickness = wallThicknessMultiplier * BASKET_SCALE_FACTOR;
-        const floorThickness = floorThicknessMultiplier * BASKET_SCALE_FACTOR;
+    const wallThickness = wallThicknessMultiplier * BASKET_SCALE_FACTOR;
+    const floorThickness = floorThicknessMultiplier * BASKET_SCALE_FACTOR;
 
-        const basketPhysicsY = groundBody.position.y + (actualBasketHeight / 2) + 0.5;
-        const basketPosition = new CANNON.Vec3(0, basketPhysicsY, -26); 
+    const basketPhysicsY = groundBody.position.y + (actualBasketHeight / 2) + 0.5;
+    const basketPosition = new CANNON.Vec3(0, basketPhysicsY, -16); 
 
-        const basketBody = new CANNON.Body({
-          mass: 50,
-          type: CANNON.Body.DYNAMIC,
-          position: basketPosition, 
-          material: basketMaterial,
-          linearDamping: 0.5,
-          angularDamping: 0.5,
-        });
-        basketBody.userData = { name: 'basket' };
+    const basketBody = new CANNON.Body({
+      mass: 50,
+      type: CANNON.Body.DYNAMIC,
+      position: basketPosition, 
+      material: basketMaterial,
+      linearDamping: 0.5,
+      angularDamping: 0.5,
+    });
+    basketBody.userData = { name: 'basket' };
 
-        const floorShape = new CANNON.Box(new CANNON.Vec3(actualBasketWidth / 2, floorThickness / 2, actualBasketDepth / 2));
-        basketBody.addShape(floorShape, new CANNON.Vec3(0, -actualBasketHeight / 2 + floorThickness / 2, 0));
+    const baseRadius = Math.max(actualBasketWidth, actualBasketDepth) / 2;
+    const wallHeight = actualBasketHeight; 
+    const baseThickness = floorThicknessMultiplier * BASKET_SCALE_FACTOR; 
 
-        const frontWallShape = new CANNON.Box(new CANNON.Vec3(actualBasketWidth / 2, actualBasketHeight / 2, wallThickness / 2));
-        basketBody.addShape(frontWallShape, new CANNON.Vec3(0, 0, -(actualBasketDepth / 2) + (wallThickness / 2)));
+    // Fundo do Cesto (cilindro fino)
+    const floorShape = new CANNON.Cylinder(baseRadius, baseRadius, baseThickness, 16);
+    basketBody.addShape(floorShape, new CANNON.Vec3(0, -actualBasketHeight / 2 + baseThickness / 2, 0));
 
-        const backWallShape = new CANNON.Box(new CANNON.Vec3(actualBasketWidth / 2, actualBasketHeight / 2, wallThickness / 2));
-        basketBody.addShape(backWallShape, new CANNON.Vec3(0, 0, (actualBasketDepth / 2) - (wallThickness / 2)));
+    // Paredes do Cesto (múltiplas caixas para formar o aro)
+    const numWallSegments = 16; 
+    const angleStep = (Math.PI * 2) / numWallSegments;
+    const wallRadius = baseRadius - (wallThickness / 2); 
+    const segmentLength = (baseRadius * 2 * Math.PI) / numWallSegments; 
 
-        const sideWallDepth = actualBasketDepth - (wallThickness * 2); 
-        const leftWallShape = new CANNON.Box(new CANNON.Vec3(wallThickness / 2, actualBasketHeight / 2, sideWallDepth / 2));
-        basketBody.addShape(leftWallShape, new CANNON.Vec3(-(actualBasketWidth / 2) + (wallThickness / 2), 0, 0));
+    for (let i = 0; i < numWallSegments; i++) {
+        const angle = i * angleStep;
+        const wallX = Math.cos(angle) * wallRadius;
+        const wallZ = Math.sin(angle) * wallRadius;
+        const wallRotation = new CANNON.Quaternion();
+        wallRotation.setFromEuler(0, angle, 0); 
 
-        const rightWallShape = new CANNON.Box(new CANNON.Vec3(wallThickness / 2, actualBasketHeight / 2, sideWallDepth / 2));
-        basketBody.addShape(rightWallShape, new CANNON.Vec3((actualBasketWidth / 2) - (wallThickness / 2), 0, 0));
+        const wallSegmentShape = new CANNON.Box(new CANNON.Vec3(wallThickness / 2, wallHeight / 2, segmentLength / 2));
+        basketBody.addShape(wallSegmentShape, new CANNON.Vec3(wallX, 0, wallZ), wallRotation);
+    }
+    
+    world.addBody(basketBody);
+    basketBodyRef.current = basketBody;
 
-        world.addBody(basketBody);
-        basketBodyRef.current = basketBody;
+    basketBody.addEventListener('collide', (e) => {
+    });
 
-        // Moved this line inside the callback where basketBody is defined
-        basketBody.addEventListener('collide', (e) => {
-        });
+    // Estas linhas devem ser removidas daqui e o ajuste feito na função animate()
+    // cestoModel.position.copy(basketBody.position); 
+    // cestoModel.position.y += visualModelBaseY + (actualBasketHeight / 2) + basketYOffset; 
+    // cestoModel.quaternion.copy(basketBody.quaternion); 
+    
+    cestoModel.rotation.y += Math.PI/3 ;
 
-        cestoModel.position.copy(basketBody.position); 
-       cestoModel.position.y += ( -(actualBasketHeight / 2) - visualModelBaseY) + 0.5; // O +0.05 é um ajuste fino para subir um pouco
-        cestoModel.quaternion.copy(basketBody.quaternion); 
-        
-        cestoModel.rotation.y += Math.PI/3 ;
+    cestoModel.receiveShadow = true;
+    cestoModel.castShadow = true;
 
-        cestoModel.receiveShadow = true;
-        cestoModel.castShadow = true;
-
-        cestoModel.traverse((child) => {
-          if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-          }
-        });
-
-        scene.add(cestoModel);
-        basketMeshRef.current = cestoModel;
-      },
-      undefined,
-      (error) => {
-        console.error('Erro ao carregar o modelo GLTF (cesto.glb):', error);
+    cestoModel.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
       }
-    );
+    });
+
+    scene.add(cestoModel);
+    basketMeshRef.current = cestoModel;
+  },
+  undefined,
+  (error) => {
+    console.error('Erro ao carregar o modelo GLTF (cesto.glb):', error);
+  }
+);
 
     const gridSize = 100;
     const divisions = 30;
@@ -386,7 +395,7 @@ export default function GravityScene() {
 
       if (basketMeshRef.current && basketBodyRef.current) {
         basketMeshRef.current.position.copy(basketBodyRef.current.position);
-        basketMeshRef.current.quaternion.copy(basketBodyRef.current.quaternion);
+        basketMeshRef.current.quaternion.copy(basketBodyRef.current.quaternion);  
       }
 
       renderer.render(scene, camera);
