@@ -111,7 +111,7 @@ Código:<br />
     text: `
 Este é o portfólio que você está visitando :) É meu último trabalho. Aqui, tive mais liberdade para criar, mas sempre com o foco nos objetivos de um portfólio: clareza e objetividade. O trabalho busca a simplicidade para que o usuário seja conduzido até o objeto principal (que são os projetos), sem deixar de observar detalhes importantes do front-end, como a Identidade visual, a navegabilidade com o slider feito com a biblioteca Swiper e a tela interativa com Three.js e o Blender<br /><br />
 
-Na versão Desktop, você pode arrastar o Slider para retirá-lo da frente da animação e liberar espaço para a interação. Na versão mobile, dê um duplo clique em PROJETOS para minimizá-lo ou voltar.
+Na versão Desktop, você pode arrastar o Slider para retirá-lo da frente da animação e liberar espaço para a interação. As setas comandam o cesto. Na versão mobile, dê um duplo clique em PROJETOS para minimizá-lo ou voltar.
 Código:<br />
 - Repositório no GitHub https://github.com/GustavoPizente/portifolio
 `.trim(),

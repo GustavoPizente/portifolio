@@ -16,7 +16,7 @@ export default function GravityScene() {
   const sunLightRef = useRef(null);
   const sunMeshRef = useRef(null);
   const selectedBodyRef = useRef(null);
-  const currentSunIntensityRef = useRef(1.8);
+  const currentSunIntensityRef = useRef(1);
   const currentSunEmissiveIntensityRef = useRef(2.0);
   const isCreatingBasketRef = useRef(false);
 
@@ -58,8 +58,8 @@ export default function GravityScene() {
       appleMaterial,
       basketMaterial,
       {
-        friction: 0.6,
-        restitution: 0.1,
+        friction: 0.3,
+        restitution: 0.2,
       }
     );
     world.addContactMaterial(appleBasketContactMaterial);
@@ -127,7 +127,7 @@ export default function GravityScene() {
 
     const BASKET_SCALE_FACTOR = 4;
     const wallThicknessMultiplier = 0.4;
-    const floorThicknessMultiplier = 0.2;
+    const floorThicknessMultiplier = 0.4;
     const initialBasketPosition = new CANNON.Vec3(
       0,
       groundBody.position.y + 2.5,
@@ -196,7 +196,7 @@ export default function GravityScene() {
           const wallSegmentShape = new CANNON.Box(
             new CANNON.Vec3(
               (wallThicknessMultiplier * BASKET_SCALE_FACTOR) / 2,
-              wallHeight / 2,
+              wallHeight / 2.1,
               segmentLength / 2
             )
           );
@@ -223,7 +223,7 @@ export default function GravityScene() {
             const safeBasketRadius =
               baseRadius -
               (wallThicknessMultiplier * BASKET_SCALE_FACTOR) / 2 +
-              0.5;
+              .5;
             const isInsideBasketHorizontally =
               distanceX < safeBasketRadius && distanceZ < safeBasketRadius;
             const isInsideBasketVertically =
@@ -548,6 +548,7 @@ export default function GravityScene() {
         messageRef.current.style.opacity = "0";
       }, 3000);
     };
+    
 
     const animate = () => {
       requestAnimationFrame(animate);
@@ -570,7 +571,7 @@ export default function GravityScene() {
           const distanceToSun = basketBodyRef.current.position.distanceTo(
             new CANNON.Vec3(sun.position.x, sun.position.y, sun.position.z)
           );
-           if (distanceToSun < 2) {
+           if (distanceToSun < 1.5) {
       if (basketMeshRef.current) {
         scene.remove(basketMeshRef.current);
         console.log("estou removendo o mesh")
@@ -585,8 +586,8 @@ export default function GravityScene() {
         basketBodyRef.current = null;
       }
 
-      currentSunIntensityRef.current += 0.5;
-      currentSunEmissiveIntensityRef.current += 0.5;
+      currentSunIntensityRef.current += 1;
+      currentSunEmissiveIntensityRef.current += 1;
 
       if (sunLightRef.current) {
         sunLightRef.current.intensity = currentSunIntensityRef.current;
@@ -628,6 +629,7 @@ export default function GravityScene() {
     };
 
     animate();
+    
 
     return () => {
       if (spawnIntervalRef.current) {
