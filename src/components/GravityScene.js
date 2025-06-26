@@ -68,7 +68,7 @@ export default function GravityScene() {
       basketMaterial,
       groundMaterial,
       {
-        friction: 0.7,
+        friction: 0.1,
         restitution: 0.1,
       }
     );
@@ -155,14 +155,19 @@ export default function GravityScene() {
 
         const actualBasketHeight = visualModelHeight;
 
-        const newBasketBody = new CANNON.Body({
-          mass: 50,
-          type: CANNON.Body.DYNAMIC,
-          position: initialBasketPosition.clone(),
-          material: basketMaterial,
-          linearDamping: 0.5,
-          angularDamping: 0.5,
-        });
+      const newBasketBody = new CANNON.Body({
+    mass: 50,
+    type: CANNON.Body.DYNAMIC,
+    position: initialBasketPosition.clone(),
+    material: basketMaterial,
+    linearDamping: 0.5,
+    angularDamping: 0.5,
+    // Ajuste aqui:
+    // Tente usar a espessura da parede ou o raio de uma maçã,
+    // ou um valor pequeno que faça sentido para colisões precisas.
+    ccdSweptSphereRadius: 0.6, // Raio de uma maçã (approx) ou espessura da parede * 0.5
+    ccdMotionThreshold: 0.1 // O objeto precisa se mover pelo menos 0.1 unidades para ativar o CCD
+});
         newBasketBody.userData = { name: "basket", applesInBasket: 0 };
 
         const baseRadius = Math.max(visualModelWidth, visualModelDepth) / 2;
@@ -313,12 +318,15 @@ export default function GravityScene() {
             material: appleMaterial,
             linearDamping: 0.3,
             angularDamping: 0.1,
-            shape: new CANNON.Sphere(0.6),
+            shape: new CANNON.Sphere(0.6), // O raio da sua esfera é 0.6
+            // Adicionando as propriedades de CCD aqui:
+            ccdSweptSphereRadius: 0.6, // Use o próprio raio da maçã para o CCD
+            ccdMotionThreshold: 0.1, // Ativa o CCD se a maçã se mover mais de 0.1 unidades por passo
           });
           body.position.copy(mesh.position);
           body.userData = { name: "apple", inBasket: false };
           world.addBody(body);
-
+ 
           frontBoxes.push({ mesh, body });
         };
         spawnFrontObject();
@@ -372,7 +380,7 @@ export default function GravityScene() {
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
     const dragStrength = 500;
-    const keyboardMoveSpeed = 0.5;
+    const keyboardMoveSpeed = 0.2;
 
     const getClientCoords = (event) => {
       if (event.touches && event.touches.length > 0) {
