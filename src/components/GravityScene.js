@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
-import * as THREE from 'three';
-import * as CANNON from 'cannon-es';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import Header from './Header';
-import Main from './Main';
-import Footer from './Footer';
+import React, { useEffect, useRef } from "react";
+import * as THREE from "three";
+import * as CANNON from "cannon-es";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import Header from "./Header";
+import Main from "./Main";
+import Footer from "./Footer";
 
 export default function GravityScene() {
   const mountRef = useRef(null);
@@ -12,6 +12,13 @@ export default function GravityScene() {
   const spawnIntervalRef = useRef(null);
   const basketMeshRef = useRef(null);
   const basketBodyRef = useRef(null);
+  const messageRef = useRef(null);
+  const sunLightRef = useRef(null);
+  const sunMeshRef = useRef(null);
+  const selectedBodyRef = useRef(null);
+  const currentSunIntensityRef = useRef(1.8);
+  const currentSunEmissiveIntensityRef = useRef(2.0);
+  const isCreatingBasketRef = useRef(false);
 
   useEffect(() => {
     const scene = new THREE.Scene();
@@ -33,26 +40,38 @@ export default function GravityScene() {
       gravity: new CANNON.Vec3(0, -9.81, 0),
     });
 
-    const groundMaterial = new CANNON.Material('ground');
-    const appleMaterial = new CANNON.Material('apple');
-    const basketMaterial = new CANNON.Material('basket');
+    const groundMaterial = new CANNON.Material("ground");
+    const appleMaterial = new CANNON.Material("apple");
+    const basketMaterial = new CANNON.Material("basket");
 
-    const groundAppleContactMaterial = new CANNON.ContactMaterial(groundMaterial, appleMaterial, {
-      friction: 0.4,
-      restitution: 0.2,
-    });
+    const groundAppleContactMaterial = new CANNON.ContactMaterial(
+      groundMaterial,
+      appleMaterial,
+      {
+        friction: 0.4,
+        restitution: 0.2,
+      }
+    );
     world.addContactMaterial(groundAppleContactMaterial);
 
-    const appleBasketContactMaterial = new CANNON.ContactMaterial(appleMaterial, basketMaterial, {
-      friction: 0.6,
-      restitution: 0.1,
-    });
+    const appleBasketContactMaterial = new CANNON.ContactMaterial(
+      appleMaterial,
+      basketMaterial,
+      {
+        friction: 0.6,
+        restitution: 0.1,
+      }
+    );
     world.addContactMaterial(appleBasketContactMaterial);
 
-    const basketGroundContactMaterial = new CANNON.ContactMaterial(basketMaterial, groundMaterial, {
+    const basketGroundContactMaterial = new CANNON.ContactMaterial(
+      basketMaterial,
+      groundMaterial,
+      {
         friction: 0.7,
         restitution: 0.1,
-    });
+      }
+    );
     world.addContactMaterial(basketGroundContactMaterial);
 
     const groundBody = new CANNON.Body({
@@ -67,7 +86,7 @@ export default function GravityScene() {
     const groundGeo = new THREE.PlaneGeometry(150, 100, 1, 100);
 
     const blue = new THREE.Color(0xa6d9e0);
-    const yellow = new THREE.Color(0xFCFDB4);
+    const yellow = new THREE.Color(0xfcfdb4);
 
     const colors = [];
 
@@ -80,7 +99,7 @@ export default function GravityScene() {
       if (tBase < blueDominanceStart) {
         tAdjusted = tBase / blueDominanceStart;
       } else {
-        tAdjusted = 1 + ((tBase - blueDominanceStart) / (1 - blueDominanceStart));
+        tAdjusted = 1 + (tBase - blueDominanceStart) / (1 - blueDominanceStart);
         tAdjusted = Math.min(tAdjusted, 1);
       }
       const color = yellow.clone().lerp(blue, tAdjusted);
@@ -88,7 +107,10 @@ export default function GravityScene() {
       colors.push(color.r, color.g, color.b);
     }
 
-    groundGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    groundGeo.setAttribute(
+      "color",
+      new THREE.Float32BufferAttribute(colors, 3)
+    );
 
     const groundMat = new THREE.MeshStandardMaterial({
       vertexColors: true,
@@ -103,113 +125,171 @@ export default function GravityScene() {
 
     const frontBoxes = [];
 
-const BASKET_SCALE_FACTOR = 4;
-const wallThicknessMultiplier = 0.2;
-const floorThicknessMultiplier = 0.2;
+    const BASKET_SCALE_FACTOR = 4;
+    const wallThicknessMultiplier = 0.4;
+    const floorThicknessMultiplier = 0.2;
+    const initialBasketPosition = new CANNON.Vec3(
+      0,
+      groundBody.position.y + 2.5,
+      -16
+    );
 
-const basketLoader = new GLTFLoader();
-basketLoader.load(
-  '/cesto.glb',
-  (gltf) => {
-    const cestoModel = gltf.scene;
-    cestoModel.scale.set(BASKET_SCALE_FACTOR, BASKET_SCALE_FACTOR, BASKET_SCALE_FACTOR);
-    
-    const bbox = new THREE.Box3().setFromObject(cestoModel);
-    const visualModelWidth = bbox.max.x - bbox.min.x;
-    const visualModelHeight = bbox.max.y - bbox.min.y;
-    const visualModelDepth = bbox.max.z - bbox.min.z;
+    const createBasket = async () => {
+      if (isCreatingBasketRef.current) return;
+      isCreatingBasketRef.current = true;
 
-    const visualModelBaseY = bbox.min.y; 
+      const basketLoader = new GLTFLoader();
+      try {
+        const gltf = await basketLoader.loadAsync("/cesto.glb");
+        const cestoModel = gltf.scene;
+        cestoModel.scale.set(
+          BASKET_SCALE_FACTOR,
+          BASKET_SCALE_FACTOR,
+          BASKET_SCALE_FACTOR
+        );
 
-    const actualBasketWidth = visualModelWidth;
-    const actualBasketHeight = visualModelHeight;
-    const actualBasketDepth = visualModelDepth;
+        const bbox = new THREE.Box3().setFromObject(cestoModel);
+        const visualModelWidth = bbox.max.x - bbox.min.x;
+        const visualModelHeight = bbox.max.y - bbox.min.y;
+        const visualModelDepth = bbox.max.z - bbox.min.z;
 
-    const wallThickness = wallThicknessMultiplier * BASKET_SCALE_FACTOR;
-    const floorThickness = floorThicknessMultiplier * BASKET_SCALE_FACTOR;
+        const actualBasketHeight = visualModelHeight;
 
-    const basketPhysicsY = groundBody.position.y + (actualBasketHeight / 2) + 0.5;
-    const basketPosition = new CANNON.Vec3(0, basketPhysicsY, -16); 
+        const newBasketBody = new CANNON.Body({
+          mass: 50,
+          type: CANNON.Body.DYNAMIC,
+          position: initialBasketPosition.clone(),
+          material: basketMaterial,
+          linearDamping: 0.5,
+          angularDamping: 0.5,
+        });
+        newBasketBody.userData = { name: "basket", applesInBasket: 0 };
 
-    const basketBody = new CANNON.Body({
-      mass: 50,
-      type: CANNON.Body.DYNAMIC,
-      position: basketPosition, 
-      material: basketMaterial,
-      linearDamping: 0.5,
-      angularDamping: 0.5,
-    });
-    basketBody.userData = { name: 'basket' };
+        const baseRadius = Math.max(visualModelWidth, visualModelDepth) / 2;
+        const wallHeight = actualBasketHeight;
+        const baseThickness = floorThicknessMultiplier * BASKET_SCALE_FACTOR;
 
-    const baseRadius = Math.max(actualBasketWidth, actualBasketDepth) / 2;
-    const wallHeight = actualBasketHeight; 
-    const baseThickness = floorThicknessMultiplier * BASKET_SCALE_FACTOR; 
+        const floorShape = new CANNON.Cylinder(
+          baseRadius,
+          baseRadius,
+          baseThickness,
+          16
+        );
+        newBasketBody.addShape(
+          floorShape,
+          new CANNON.Vec3(0, -actualBasketHeight / 2 + baseThickness / 2, 0)
+        );
 
-    // Fundo do Cesto (cilindro fino)
-    const floorShape = new CANNON.Cylinder(baseRadius, baseRadius, baseThickness, 16);
-    basketBody.addShape(floorShape, new CANNON.Vec3(0, -actualBasketHeight / 2 + baseThickness / 2, 0));
+        const numWallSegments = 16;
+        const angleStep = (Math.PI * 2) / numWallSegments;
+        const wallRadius =
+          baseRadius - (wallThicknessMultiplier * BASKET_SCALE_FACTOR) / 2;
+        const segmentLength = (baseRadius * 2 * Math.PI) / numWallSegments;
 
-    // Paredes do Cesto (múltiplas caixas para formar o aro)
-    const numWallSegments = 16; 
-    const angleStep = (Math.PI * 2) / numWallSegments;
-    const wallRadius = baseRadius - (wallThickness / 2); 
-    const segmentLength = (baseRadius * 2 * Math.PI) / numWallSegments; 
+        for (let i = 0; i < numWallSegments; i++) {
+          const angle = i * angleStep;
+          const wallX = Math.cos(angle) * wallRadius;
+          const wallZ = Math.sin(angle) * wallRadius;
+          const wallRotation = new CANNON.Quaternion();
+          wallRotation.setFromEuler(0, angle, 0);
 
-    for (let i = 0; i < numWallSegments; i++) {
-        const angle = i * angleStep;
-        const wallX = Math.cos(angle) * wallRadius;
-        const wallZ = Math.sin(angle) * wallRadius;
-        const wallRotation = new CANNON.Quaternion();
-        wallRotation.setFromEuler(0, angle, 0); 
+          const wallSegmentShape = new CANNON.Box(
+            new CANNON.Vec3(
+              (wallThicknessMultiplier * BASKET_SCALE_FACTOR) / 2,
+              wallHeight / 2,
+              segmentLength / 2
+            )
+          );
+          newBasketBody.addShape(
+            wallSegmentShape,
+            new CANNON.Vec3(wallX, 0, wallZ),
+            wallRotation
+          );
+        }
 
-        const wallSegmentShape = new CANNON.Box(new CANNON.Vec3(wallThickness / 2, wallHeight / 2, segmentLength / 2));
-        basketBody.addShape(wallSegmentShape, new CANNON.Vec3(wallX, 0, wallZ), wallRotation);
-    }
-    
-    world.addBody(basketBody);
-    basketBodyRef.current = basketBody;
+        world.addBody(newBasketBody);
+        basketBodyRef.current = newBasketBody;
+        basketMeshRef.current = cestoModel;
 
-    basketBody.addEventListener('collide', (e) => {
-    });
+        newBasketBody.addEventListener("collide", (e) => {
+          if (e.body.userData && e.body.userData.name === "apple") {
+            const appleBody = e.body;
+            const basketCenter = newBasketBody.position;
+            const applePosition = appleBody.position;
 
-    // Estas linhas devem ser removidas daqui e o ajuste feito na função animate()
-    // cestoModel.position.copy(basketBody.position); 
-    // cestoModel.position.y += visualModelBaseY + (actualBasketHeight / 2) + basketYOffset; 
-    // cestoModel.quaternion.copy(basketBody.quaternion); 
-    
-    cestoModel.rotation.y += Math.PI/3 ;
+            const distanceX = Math.abs(applePosition.x - basketCenter.x);
+            const distanceZ = Math.abs(applePosition.z - basketCenter.z);
 
-    cestoModel.receiveShadow = true;
-    cestoModel.castShadow = true;
+            const safeBasketRadius =
+              baseRadius -
+              (wallThicknessMultiplier * BASKET_SCALE_FACTOR) / 2 +
+              0.5;
+            const isInsideBasketHorizontally =
+              distanceX < safeBasketRadius && distanceZ < safeBasketRadius;
+            const isInsideBasketVertically =
+              applePosition.y > basketCenter.y - wallHeight / 2 &&
+              applePosition.y < basketCenter.y + wallHeight / 2;
 
-    cestoModel.traverse((child) => {
-      if (child.isMesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
+            if (
+              isInsideBasketHorizontally &&
+              isInsideBasketVertically &&
+              !appleBody.userData.inBasket
+            ) {
+              appleBody.userData.inBasket = true;
+              newBasketBody.userData.applesInBasket =
+                (newBasketBody.userData.applesInBasket || 0) + 1;
+              console.log(
+                `Maçãs na cesta: ${newBasketBody.userData.applesInBasket}`
+              );
+              if (newBasketBody.userData.applesInBasket >= 3) {
+                showMessage("Leve o cesto até o sol");
+              }
+            }
+          }
+        });
+
+        cestoModel.rotation.y += Math.PI / 3;
+
+        cestoModel.receiveShadow = true;
+        cestoModel.castShadow = true;
+
+        cestoModel.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+
+        scene.add(cestoModel);
+        isCreatingBasketRef.current = false;
+        
+      } catch (error) {
+        console.error("Erro ao carregar o modelo GLTF (cesto.glb):", error);
+        isCreatingBasketRef.current = false;
       }
-    });
+    };
 
-    scene.add(cestoModel);
-    basketMeshRef.current = cestoModel;
-  },
-  undefined,
-  (error) => {
-    console.error('Erro ao carregar o modelo GLTF (cesto.glb):', error);
-  }
-);
+    createBasket();
+    isCreatingBasketRef.current = false;
+    console.log(isCreatingBasketRef)
 
     const gridSize = 100;
     const divisions = 30;
     const color1 = 0xe7e97e;
     const color2 = 0xe7e97e;
 
-    const gridHelperXZ = new THREE.GridHelper(gridSize, divisions, color1, color2);
+    const gridHelperXZ = new THREE.GridHelper(
+      gridSize,
+      divisions,
+      color1,
+      color2
+    );
     gridHelperXZ.position.y = -5;
     scene.add(gridHelperXZ);
 
     const loader = new GLTFLoader();
     loader.load(
-      '/apple.glb',
+      "/apple.glb",
       (gltf) => {
         loadedModelRef.current = gltf.scene;
         loadedModelRef.current.scale.set(0.2, 0.2, 0.2);
@@ -233,27 +313,30 @@ basketLoader.load(
             material: appleMaterial,
             linearDamping: 0.3,
             angularDamping: 0.1,
-            shape: new CANNON.Sphere(0.6)
+            shape: new CANNON.Sphere(0.6),
           });
           body.position.copy(mesh.position);
-          body.userData = { name: 'apple' };
+          body.userData = { name: "apple", inBasket: false };
           world.addBody(body);
 
           frontBoxes.push({ mesh, body });
         };
         spawnFrontObject();
-        spawnIntervalRef.current = setInterval(spawnFrontObject, 30000);
+        spawnIntervalRef.current = setInterval(spawnFrontObject, 5000);
       },
       undefined,
       (error) => {
-        console.error('Erro ao carregar o modelo GLTF (apple.glb):', error);
+        console.error("Erro ao carregar o modelo GLTF (apple.glb):", error);
       }
     );
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xFFD700, 1.8);
+    const directionalLight = new THREE.DirectionalLight(
+      0xffd700,
+      currentSunIntensityRef.current
+    );
     directionalLight.position.set(0, 15, -40);
     directionalLight.castShadow = true;
     directionalLight.shadow.mapSize.width = 2048;
@@ -265,29 +348,38 @@ basketLoader.load(
     directionalLight.shadow.camera.top = 30;
     directionalLight.shadow.camera.bottom = -30;
     scene.add(directionalLight);
+    sunLightRef.current = directionalLight;
 
     const sunGeometry = new THREE.SphereGeometry(5, 32, 16, 0, Math.PI);
-    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFCFDB4, emissive: 0xFFD700, emissiveIntensity: 2.0 });
+    const sunMaterial = new THREE.MeshBasicMaterial({
+      color: 0xfcfdb4,
+      emissive: 0xffd700,
+      emissiveIntensity: currentSunEmissiveIntensityRef.current,
+    });
     const sun = new THREE.Mesh(sunGeometry, sunMaterial);
     sun.position.copy(directionalLight.position);
     sun.position.y = -4;
     sun.position.z = -50;
     scene.add(sun);
+    sunMeshRef.current = sun;
 
     camera.position.z = 10;
     camera.position.y = 2;
 
     let selectedObject = null;
-    let selectedBody = null;
     let dragDistance = 0;
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
     const dragStrength = 500;
+    const keyboardMoveSpeed = 0.5;
 
     const getClientCoords = (event) => {
       if (event.touches && event.touches.length > 0) {
-        return { clientX: event.touches[0].clientX, clientY: event.touches[0].clientY };
+        return {
+          clientX: event.touches[0].clientX,
+          clientY: event.touches[0].clientY,
+        };
       }
       return { clientX: event.clientX, clientY: event.clientY };
     };
@@ -298,11 +390,11 @@ basketLoader.load(
       mouse.y = -(clientY / window.innerHeight) * 2 + 1;
       raycaster.setFromCamera(mouse, camera);
 
-      const meshesToIntersect = frontBoxes.map(item => item.mesh);
+      const meshesToIntersect = frontBoxes.map((item) => item.mesh);
       if (basketMeshRef.current) {
         meshesToIntersect.push(basketMeshRef.current);
       }
-      
+
       const intersects = raycaster.intersectObjects(meshesToIntersect, true);
 
       if (intersects.length > 0) {
@@ -313,12 +405,15 @@ basketLoader.load(
           found = frontBoxes.find(({ mesh }) => mesh === intersectedObject);
           if (found) {
             selectedObject = found.mesh;
-            selectedBody = found.body;
+            selectedBodyRef.current = found.body;
             break;
           }
-          if (basketMeshRef.current && intersectedObject.uuid === basketMeshRef.current.uuid) {
+          if (
+            basketMeshRef.current &&
+            intersectedObject.uuid === basketMeshRef.current.uuid
+          ) {
             selectedObject = basketMeshRef.current;
-            selectedBody = basketBodyRef.current;
+            selectedBodyRef.current = basketBodyRef.current;
             break;
           }
           if (intersectedObject.parent) {
@@ -328,9 +423,9 @@ basketLoader.load(
           }
         }
 
-        if (selectedObject && selectedBody) {
+        if (selectedObject && selectedBodyRef.current) {
           dragDistance = camera.position.distanceTo(selectedObject.position);
-          if (event.type === 'touchstart') {
+          if (event.type === "touchstart") {
             event.preventDefault();
           }
         }
@@ -338,7 +433,7 @@ basketLoader.load(
     };
 
     const onPointerMove = (event) => {
-      if (!selectedObject || !selectedBody) return;
+      if (!selectedObject || !selectedBodyRef.current) return;
       const { clientX, clientY } = getClientCoords(event);
       mouse.x = (clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(clientY / window.innerHeight) * 2 + 1;
@@ -349,40 +444,110 @@ basketLoader.load(
 
       if (targetPoint) {
         const forceVector = new CANNON.Vec3(
-          targetPoint.x - selectedBody.position.x,
-          targetPoint.y - selectedBody.position.y,
-          targetPoint.z - selectedBody.position.z
+          targetPoint.x - selectedBodyRef.current.position.x,
+          targetPoint.y - selectedBodyRef.current.position.y,
+          targetPoint.z - selectedBodyRef.current.position.z
         );
 
-        if (selectedBody.userData && selectedBody.userData.name === 'apple') {
-            selectedBody.applyForce(
-                forceVector.scale(dragStrength),
-                new CANNON.Vec3(0, 0, 0)
-            );
-        } else if (selectedBody.userData && selectedBody.userData.name === 'basket') {
-            selectedBody.applyForce(
-                forceVector.scale(dragStrength * 2),
-                new CANNON.Vec3(0, 0, 0)
-            );
+        if (
+          selectedBodyRef.current.userData &&
+          selectedBodyRef.current.userData.name === "apple"
+        ) {
+          selectedBodyRef.current.applyForce(
+            forceVector.scale(dragStrength),
+            new CANNON.Vec3(0, 0, 0)
+          );
+        } else if (
+          selectedBodyRef.current.userData &&
+          selectedBodyRef.current.userData.name === "basket"
+        ) {
+          selectedBodyRef.current.applyForce(
+            forceVector.scale(dragStrength * 2),
+            new CANNON.Vec3(0, 0, 0)
+          );
         }
       }
-      if (event.type === 'touchmove') {
+      if (event.type === "touchmove") {
         event.preventDefault();
       }
     };
 
     const onPointerUp = () => {
       selectedObject = null;
-      selectedBody = null;
+      selectedBodyRef.current = null;
     };
 
-    window.addEventListener('mousedown', onPointerDown);
-    window.addEventListener('mousemove', onPointerMove);
-    window.addEventListener('mouseup', onPointerUp);
+    const onKeyDown = (event) => {
+      if (!basketBodyRef.current || isCreatingBasketRef.current) return;
 
-    window.addEventListener('touchstart', onPointerDown, { passive: false });
-    window.addEventListener('touchmove', onPointerMove, { passive: false });
-    window.addEventListener('touchend', onPointerUp);
+      const currentPosition = basketBodyRef.current.position;
+      let newPosition = new CANNON.Vec3(
+        currentPosition.x,
+        currentPosition.y,
+        currentPosition.z
+      );
+
+      switch (event.key) {
+        case "ArrowUp":
+          newPosition.z -= keyboardMoveSpeed;
+          break;
+        case "ArrowDown":
+          newPosition.z += keyboardMoveSpeed;
+          break;
+        case "ArrowLeft":
+          newPosition.x -= keyboardMoveSpeed;
+          break;
+        case "ArrowRight":
+          newPosition.x += keyboardMoveSpeed;
+          break;
+        case " ":
+          newPosition.y += keyboardMoveSpeed;
+          break;
+        case "Shift":
+          newPosition.y -= keyboardMoveSpeed;
+          break;
+        default:
+          return;
+      }
+
+      basketBodyRef.current.position.copy(newPosition);
+      basketBodyRef.current.velocity.set(0, 0, 0);
+      basketBodyRef.current.angularVelocity.set(0, 0, 0);
+    };
+
+    window.addEventListener("mousedown", onPointerDown);
+    window.addEventListener("mousemove", onPointerMove);
+    window.addEventListener("mouseup", onPointerUp);
+    window.addEventListener("keydown", onKeyDown);
+
+    window.addEventListener("touchstart", onPointerDown, { passive: false });
+    window.addEventListener("touchmove", onPointerMove, { passive: false });
+    window.addEventListener("touchend", onPointerUp);
+
+    const showMessage = (text) => {
+      if (!messageRef.current) {
+        messageRef.current = document.createElement("div");
+        messageRef.current.style.position = "absolute";
+        messageRef.current.style.top = "50px";
+        messageRef.current.style.left = "50%";
+        messageRef.current.style.transform = "translateX(-50%)";
+        messageRef.current.style.background = "rgba(0, 0, 0, 0.7)";
+        messageRef.current.style.color = "white";
+        messageRef.current.style.padding = "10px 20px";
+        messageRef.current.style.borderRadius = "5px";
+        messageRef.current.style.zIndex = "100";
+        messageRef.current.style.fontSize = "24px";
+        messageRef.current.style.opacity = "0";
+        messageRef.current.style.transition = "opacity 0.5s";
+        document.body.appendChild(messageRef.current);
+      }
+      messageRef.current.textContent = text;
+      messageRef.current.style.opacity = "1";
+
+      setTimeout(() => {
+        messageRef.current.style.opacity = "0";
+      }, 3000);
+    };
 
     const animate = () => {
       requestAnimationFrame(animate);
@@ -393,39 +558,105 @@ basketLoader.load(
         mesh.quaternion.copy(body.quaternion);
       });
 
-      if (basketMeshRef.current && basketBodyRef.current) {
+      if (
+        basketMeshRef.current &&
+        basketBodyRef.current &&
+        !isCreatingBasketRef.current
+      ) {
         basketMeshRef.current.position.copy(basketBodyRef.current.position);
-        basketMeshRef.current.quaternion.copy(basketBodyRef.current.quaternion);  
+        basketMeshRef.current.quaternion.copy(basketBodyRef.current.quaternion);
+
+        if (basketBodyRef.current.userData.applesInBasket >= 3) {
+          const distanceToSun = basketBodyRef.current.position.distanceTo(
+            new CANNON.Vec3(sun.position.x, sun.position.y, sun.position.z)
+          );
+           if (distanceToSun < 2) {
+      if (basketMeshRef.current) {
+        scene.remove(basketMeshRef.current);
+        console.log("estou removendo o mesh")
+        console.log(basketMeshRef.current)
+        // ...
+        basketMeshRef.current = null;
+      }
+      if (basketBodyRef.current) {
+        world.removeBody(basketBodyRef.current);
+         console.log("estou removendo o corpo ")
+         console.log(basketBodyRef.current)
+        basketBodyRef.current = null;
+      }
+
+      currentSunIntensityRef.current += 0.5;
+      currentSunEmissiveIntensityRef.current += 0.5;
+
+      if (sunLightRef.current) {
+        sunLightRef.current.intensity = currentSunIntensityRef.current;
+      }
+      if (sunMeshRef.current && sunMeshRef.current.material) {
+        sunMeshRef.current.material.emissiveIntensity = currentSunEmissiveIntensityRef.current;
+      }
+
+     isCreatingBasketRef.current = false;
+      createBasket(); // ✅ Esta linha deve ser chamada com sucesso
+
+      // Limpar as maçãs
+      frontBoxes.forEach(({ mesh, body }) => {
+        scene.remove(mesh);
+        world.removeBody(body);
+        if (mesh.geometry) mesh.geometry.dispose();
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach(material => material.dispose());
+          } else {
+            mesh.material.dispose();
+          }
+        }
+      });
+      frontBoxes.length = 0;
+      hideMessage();
+    
+          }
+        }
       }
 
       renderer.render(scene, camera);
+    };
+
+    const hideMessage = () => {
+      if (messageRef.current) {
+        messageRef.current.style.opacity = "0";
+      }
     };
 
     animate();
 
     return () => {
       if (spawnIntervalRef.current) {
-        clearInterval(spawnIntervalRef.current);
+        clearInterval(spawnIntervalRef.current); // Corrected this line
       }
 
-      window.removeEventListener('mousedown', onPointerDown);
-      window.removeEventListener('mousemove', onPointerMove);
-      window.removeEventListener('mouseup', onPointerUp);
-      window.removeEventListener('touchstart', onPointerDown);
-      window.removeEventListener('touchmove', onPointerMove);
-      window.removeEventListener('touchend', onPointerUp);
+      window.removeEventListener("mousedown", onPointerDown);
+      window.removeEventListener("mousemove", onPointerMove);
+      window.removeEventListener("mouseup", onPointerUp);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("touchstart", onPointerDown);
+      window.removeEventListener("touchmove", onPointerMove);
+      window.removeEventListener("touchend", onPointerUp);
 
-      if (mountRef.current && renderer.domElement && mountRef.current.contains(renderer.domElement)) {
+      if (
+        mountRef.current &&
+        renderer.domElement &&
+        mountRef.current.contains(renderer.domElement)
+      ) {
         mountRef.current.removeChild(renderer.domElement);
       }
 
       const childrenToRemove = [...scene.children];
-      childrenToRemove.forEach(child => {
+      childrenToRemove.forEach((child) => {
         scene.remove(child);
         if (child.geometry) child.geometry.dispose();
         if (child.material) {
           if (Array.isArray(child.material)) {
-            child.material.forEach(material => material.dispose());
+            child.material.forEach((material) => material.dispose());
           } else {
             child.material.dispose();
           }
@@ -436,26 +667,31 @@ basketLoader.load(
       while (world.bodies.length > 0) {
         world.removeBody(world.bodies[0]);
       }
+      if (messageRef.current && document.body.contains(messageRef.current)) {
+        document.body.removeChild(messageRef.current);
+        messageRef.current = null;
+      }
+      isCreatingBasketRef.current = false;
     };
   }, []);
 
   return (
     <div
       style={{
-        position: 'relative',
-        width: '100vw',
-        height: '100vh',
-        overflow: 'hidden',
+        position: "relative",
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
       }}
     >
       <div
         ref={mountRef}
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
-          width: '100vw',
-          height: '100vh',
+          width: "100vw",
+          height: "100vh",
           zIndex: 0,
         }}
       />

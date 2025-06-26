@@ -17,7 +17,6 @@ header {
   display: flex;
   justify-content: center;
   position: relative;
-  z-index: 100;
 }
 
 menu {
@@ -60,7 +59,8 @@ menu {
   background-color: #fcfdb4;
   border: 1px solid black;
   text-decoration: none;
-  z-index: 20;
+  
+  z-index: 1000;
 
   list-style-type: none;
   padding: 0;
@@ -169,6 +169,7 @@ a {
   position: relative;
   flex-direction: column;
   align-items: center;
+  z-index: 200;
 }
 
 /*SLIDER*/
@@ -208,6 +209,12 @@ button {
   .projetos {
     width: 95vh;
   }
+  .textoperfil h1 {
+
+   font-size: 0.85rem;
+  }
+
+
 }
 
 /* MODAIS */
@@ -254,6 +261,8 @@ button {
   border-top-width: 50px;
   padding-top: 60px;
   padding-bottom: 40px;
+  
+  z-index: 2000;
 }
 
 .modal p {
