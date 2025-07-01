@@ -15,12 +15,12 @@ register();
 
 function Main() {
   const data = [
-  {
-    id: "1",
-    image: "caminhos.jpeg",
-    projectimage: "caminhosid.png",
-    link: "https://caminhos-da-fala.vercel.app/",
-    text: `
+    {
+      id: "1",
+      image: "caminhos.jpeg",
+      projectimage: "caminhosid.png",
+      link: "https://caminhos-da-fala.vercel.app/",
+      text: `
 Resumo: Desenvolvimento de identidade visual e site institucional para uma fonoaudióloga.<br /><br />
 Objetivos: Divulgar seu trabalho e criar um espaço de comunicação entre a profissional e o seu público, com o fim de consolidar sua presença e autoridade.<br /><br />
 Design (UI/UX):<br />
@@ -37,13 +37,13 @@ Deploy:<br />
 Código:<br />
 - Repositório no GitHub https://github.com/GustavoPizente/caminhos-da-fala
 `.trim(),
-  },
-  {
-    id: "2",
-    image: "camboimMain.jpeg",
-    projectimage: "Logo.png",
-    link: "https://camboim-biojoias-git-master-gustavopizentes-projects.vercel.app/",
-    text: `
+    },
+    {
+      id: "2",
+      image: "camboimMain.jpeg",
+      projectimage: "Logo.png",
+      link: "https://camboim-biojoias-git-master-gustavopizentes-projects.vercel.app/",
+      text: `
 Resumo: Desenvolvimento de site para E-commerce de acessórios sustentáveis.<br /><br />
 Objetivos: Criar um canal de vendas com vasto catálogo e fácil atividade de compra.<br /><br />
 (Hoje o modelo consta apenas para exibição da página principal no portfólio, pois a marca não está mais em funcionamento.)<br /><br />
@@ -60,13 +60,13 @@ Deploy:<br />
 Código:<br />
 - Repositório no GitHub https://github.com/GustavoPizente/camboim-biojoias
 `.trim(),
-  },
-  {
-    id: "3",
-    image: "Buscar.jpeg",
-    projectimage: "ondas.png",
-    link: "https://viver-perto.vercel.app/",
-    text: `
+    },
+    {
+      id: "3",
+      image: "Buscar.jpeg",
+      projectimage: "ondas.png",
+      link: "https://viver-perto.vercel.app/",
+      text: `
 Resumo: Projeto feito em um dia para teste para uma Imobiliária.<br /><br />
 Objetivos: Criar uma página de entretenimento com o fim de conhecer e se conectar com novos clientes. O usuário digita o nome da cidade onde vive e o mapa vai até lá. Em seguida, ele voa até a cidade mais próxima e exibe uma segunda tela que mostra um texto encantador sobre a cidade e faz uma chamada para o mercado imobiliário. <br /><br />
 Design (UI/UX):<br />
@@ -81,13 +81,13 @@ Deploy:<br />
 Código:<br />
 - Repositório no GitHub https://github.com/GustavoPizente/viver-perto
 `.trim(),
-  },
-  {
-    id: "4",
-    image: "Podas&Jardinagem.jpeg",
-    projectimage: "podas.gif",
-    link: "https://podas-jardinagem.vercel.app/",
-    text: `
+    },
+    {
+      id: "4",
+      image: "Podas&Jardinagem.jpeg",
+      projectimage: "podas.gif",
+      link: "https://podas-jardinagem.vercel.app/",
+      text: `
 Resumo: Desenvolvimento de identidade visual e site para Jardineiro.<br /><br />
 Objetivos: Criar um cartão digital simples para deixar como contato no Google Maps. <br /><br />
 Design (UI/UX):<br />
@@ -102,26 +102,26 @@ Deploy:<br />
 Código:<br />
 - Repositório no GitHub https://github.com/GustavoPizente/podas-jardinagem
 `.trim(),
-  },
-  {
-    id: "5",
-    image: "portifolio.jpeg",
-    projectimage: "portifolio.png",
-    link: "https://portfolio-gustavonazarine.vercel.app/",
-    text: `
+    },
+    {
+      id: "5",
+      image: "portifolio.jpeg",
+      projectimage: "portifolio.png",
+      link: "https://portfolio-gustavonazarine.vercel.app/",
+      text: `
 Este é o portfólio que você está visitando :) É meu último trabalho. Aqui, tive mais liberdade para criar, mas sempre com o foco nos objetivos de um portfólio: clareza e objetividade. O trabalho busca a simplicidade para que o usuário seja conduzido até o objeto principal (que são os projetos), sem deixar de observar detalhes importantes do front-end, como a Identidade visual, a navegabilidade com o slider feito com a biblioteca Swiper e a tela interativa com Three.js e o Blender<br /><br />
 
 Na versão Desktop, você pode arrastar o Slider para retirá-lo da frente da animação e liberar espaço para a interação. As setas comandam o cesto. Na versão mobile, dê um duplo clique em PROJETOS para minimizá-lo ou voltar.
 Código:<br />
 - Repositório no GitHub https://github.com/GustavoPizente/portifolio
 `.trim(),
-  },
-  {
-    id: "6",
-    image: "PindoramaMain.jpeg",
-    projectimage: "pindorama.png",
-    link: "https://arvores-de-pindorama.vercel.app/",
-    text: `
+    },
+    {
+      id: "6",
+      image: "PindoramaMain.jpeg",
+      projectimage: "pindorama.png",
+      link: "https://arvores-de-pindorama.vercel.app/",
+      text: `
 Resumo: Hub de contato entre Marceneiros.<br /><br />
 Objetivos: Criar um local para troca de conhecimento e projetos entre marceneiros, com local para estudo, jogos e interações como rede social. <br /><br />
 Esse projeto foi feito para testar muitos conceitos, especialmente a criação e consumo de uma API que criei com Nest.js para fazer pesquisa e cadastro de madeiras. Hoje carece de mais horas de trabalho e refatoramento.
@@ -137,15 +137,15 @@ Deploy:<br />
 Código:<br />
 - Repositório no GitHub https://github.com/GustavoPizente/arvores-de-pindorama
 `.trim(),
-  },
-  {
-    id: "7",
-    image: "figma.jpeg",
-    projectimage: "figma.png",
-    link: "https://www.figma.com/proto/P72HIvGcReBPwAnpn6cl5J/Untitled?page-id=217%3A81&node-id=217-205&viewport=146%2C380%2C0.9&t=VLDV391r7R6q4Nvi-1&scaling=min-zoom&content-scaling=fixed",
-    text: "Aqui, a ideia é deixar protótipos e desenhos feitos no Figma.",
-  },
-];
+    },
+    {
+      id: "7",
+      image: "figma.jpeg",
+      projectimage: "figma.png",
+      link: "https://www.figma.com/proto/P72HIvGcReBPwAnpn6cl5J/Untitled?page-id=217%3A81&node-id=217-205&viewport=146%2C380%2C0.9&t=VLDV391r7R6q4Nvi-1&scaling=min-zoom&content-scaling=fixed",
+      text: "Aqui, a ideia é deixar protótipos e desenhos feitos no Figma.",
+    },
+  ];
 
   const [modalisOpen, setModalIsOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
@@ -239,7 +239,10 @@ Código:<br />
           <h2>let GustavoPizenteNazarine =</h2>
           <h1>
             <p>'Desenvolvedor Front-end e Estudante de Design Gráfico</p>
-            <p>Reactjs/Nextjs/CSS/HTML5/ <br></br>JavaScript/Figma/Nestjs/SQL/ <br></br>Blender/Three.js';</p>
+            <p>
+              Reactjs/Nextjs/CSS/HTML5/ <br></br>JavaScript/Figma/Nestjs/SQL/{" "}
+              <br></br>Blender/Three.js';
+            </p>
           </h1>
         </div>
       </div>
@@ -251,7 +254,9 @@ Código:<br />
         onDoubleClick={handleDoubleClick}
         style={{
           cursor: isDragging && !isMobile ? "grabbing" : "grab",
-          transform: !isMobile ? `translate(${translateX}px, ${translateY}px)` : "none",
+          transform: !isMobile
+            ? `translate(${translateX}px, ${translateY}px)`
+            : "none",
           overflow: "hidden",
           height: isMinimized && isMobile ? "50px" : "auto", // Adjust height as needed
           transition: isMobile ? "height 0.3s ease-out" : "none",
@@ -279,7 +284,10 @@ Código:<br />
           >
             {data.map((item) => (
               <SwiperSlide key={item.id}>
-                <button onClick={() => openModal(item)} onMouseDown={(e) => e.stopPropagation()}>
+                <button
+                  onClick={() => openModal(item)}
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
                   <img
                     src={item.image}
                     alt={`Imagem${item.id}`}
@@ -304,9 +312,25 @@ Código:<br />
                           className="modal-text"
                           dangerouslySetInnerHTML={{ __html: activeItem.text }}
                         />
-                        <p>
-                          Acesse <a href={activeItem.link}>CLICANDO AQUI</a>
-                        </p>
+                        {activeItem && (
+                          <div>
+                           
+                            {activeItem.id === "5" &&
+                              (() => {
+                                handleDoubleClick ();
+                              
+                              })()}
+                          
+                            Acesse{" "}
+                            <a
+                              href={activeItem.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              CLICANDO AQUI
+                            </a>
+                          </div>
+                        )}
                       </div>
                       <button onClick={closeModal}>Fechar</button>
                     </div>

@@ -19,9 +19,60 @@ export default function GravityScene() {
   const currentSunIntensityRef = useRef(1);
   const currentSunEmissiveIntensityRef = useRef(2.0);
   const isCreatingBasketRef = useRef(false);
+  const scrollProgress = useRef(0);
+  const skyMaterialRef = useRef(null);
 
   useEffect(() => {
     const scene = new THREE.Scene();
+    const bottomSkyColor = new THREE.Color(0xf8f9cc);
+    const topSkyColorBlue = new THREE.Color(0xa6d9e0);
+    const topSkyColorPurple = new THREE.Color(0xD5B8DE);
+
+    const initialSunColor = new THREE.Color(0xffd700);
+    const targetSunColor = new THREE.Color(0xD5B8DE);
+
+    const skyGeometry = new THREE.SphereGeometry(60, 32, 32);
+    const skyMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        uBottomColor: { value: bottomSkyColor },
+        uTopColorBlue: { value: topSkyColorBlue },
+        uTopColorPurple: { value: topSkyColorPurple },
+        uProgress: { value: 0.0 }
+      },
+      vertexShader: `
+        varying vec3 vWorldPosition;
+        void main() {
+          vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+          vWorldPosition = worldPosition.xyz;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 uBottomColor;
+        uniform vec3 uTopColorBlue;
+        uniform vec3 uTopColorPurple;
+        uniform float uProgress;
+
+        varying vec3 vWorldPosition;
+
+        void main() {
+          vec3 animatedTopColor = mix(uTopColorBlue, uTopColorPurple, uProgress);
+
+          float y = normalize(vWorldPosition).y;
+          float gradientFactor = smoothstep(-0.5, 1.0, y);
+
+          vec3 finalColor = mix(uBottomColor, animatedTopColor, gradientFactor);
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `,
+      side: THREE.BackSide,
+      depthWrite: false
+    });
+
+    skyMaterialRef.current = skyMaterial;
+    const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+    scene.add(sky);
+
     const camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
@@ -125,13 +176,13 @@ export default function GravityScene() {
 
     const frontBoxes = [];
 
-    const BASKET_SCALE_FACTOR = 4;
+    const BASKET_SCALE_FACTOR = 20;
     const wallThicknessMultiplier = 0.4;
     const floorThicknessMultiplier = 0.4;
     const initialBasketPosition = new CANNON.Vec3(
       0,
-      groundBody.position.y + 2.5,
-      -16
+      groundBody.position.y + 4.5,
+      -5
     );
 
     const createBasket = async () => {
@@ -140,7 +191,7 @@ export default function GravityScene() {
 
       const basketLoader = new GLTFLoader();
       try {
-        const gltf = await basketLoader.loadAsync("/cesto.glb");
+        const gltf = await basketLoader.loadAsync("/BoxBase.glb");
         const cestoModel = gltf.scene;
         cestoModel.scale.set(
           BASKET_SCALE_FACTOR,
@@ -155,19 +206,16 @@ export default function GravityScene() {
 
         const actualBasketHeight = visualModelHeight;
 
-      const newBasketBody = new CANNON.Body({
-    mass: 50,
-    type: CANNON.Body.DYNAMIC,
-    position: initialBasketPosition.clone(),
-    material: basketMaterial,
-    linearDamping: 0.5,
-    angularDamping: 0.5,
-    // Ajuste aqui:
-    // Tente usar a espessura da parede ou o raio de uma maçã,
-    // ou um valor pequeno que faça sentido para colisões precisas.
-    ccdSweptSphereRadius: 0.6, // Raio de uma maçã (approx) ou espessura da parede * 0.5
-    ccdMotionThreshold: 0.1 // O objeto precisa se mover pelo menos 0.1 unidades para ativar o CCD
-});
+        const newBasketBody = new CANNON.Body({
+          mass: 50,
+          type: CANNON.Body.DYNAMIC,
+          position: initialBasketPosition.clone(),
+          material: basketMaterial,
+          linearDamping: 0.5,
+          angularDamping: 0.5,
+          ccdSweptSphereRadius: 0.6,
+          ccdMotionThreshold: 0.1,
+        });
         newBasketBody.userData = { name: "basket", applesInBasket: 0 };
 
         const baseRadius = Math.max(visualModelWidth, visualModelDepth) / 2;
@@ -228,7 +276,7 @@ export default function GravityScene() {
             const safeBasketRadius =
               baseRadius -
               (wallThicknessMultiplier * BASKET_SCALE_FACTOR) / 2 +
-              .5;
+              0.5;
             const isInsideBasketHorizontally =
               distanceX < safeBasketRadius && distanceZ < safeBasketRadius;
             const isInsideBasketVertically =
@@ -267,7 +315,6 @@ export default function GravityScene() {
 
         scene.add(cestoModel);
         isCreatingBasketRef.current = false;
-        
       } catch (error) {
         console.error("Erro ao carregar o modelo GLTF (cesto.glb):", error);
         isCreatingBasketRef.current = false;
@@ -276,7 +323,7 @@ export default function GravityScene() {
 
     createBasket();
     isCreatingBasketRef.current = false;
-    console.log(isCreatingBasketRef)
+    console.log(isCreatingBasketRef);
 
     const gridSize = 100;
     const divisions = 30;
@@ -305,12 +352,14 @@ export default function GravityScene() {
           }
         });
 
-        const spawnFrontObject = () => {
+        const spawnSingleApple = () => {
           if (!loadedModelRef.current) {
             return;
           }
           const mesh = loadedModelRef.current.clone();
-          mesh.position.set((Math.random() - 0.5) * 10, 10, 2);
+
+          mesh.position.set(-15, 10, -16);
+
           scene.add(mesh);
 
           const body = new CANNON.Body({
@@ -318,19 +367,18 @@ export default function GravityScene() {
             material: appleMaterial,
             linearDamping: 0.3,
             angularDamping: 0.1,
-            shape: new CANNON.Sphere(0.6), // O raio da sua esfera é 0.6
-            // Adicionando as propriedades de CCD aqui:
-            ccdSweptSphereRadius: 0.6, // Use o próprio raio da maçã para o CCD
-            ccdMotionThreshold: 0.1, // Ativa o CCD se a maçã se mover mais de 0.1 unidades por passo
+            shape: new CANNON.Sphere(0.6),
+            ccdSweptSphereRadius: 0.6,
+            ccdMotionThreshold: 0.1,
           });
           body.position.copy(mesh.position);
           body.userData = { name: "apple", inBasket: false };
           world.addBody(body);
- 
+
           frontBoxes.push({ mesh, body });
         };
-        spawnFrontObject();
-        spawnIntervalRef.current = setInterval(spawnFrontObject, 5000);
+
+        spawnSingleApple();
       },
       undefined,
       (error) => {
@@ -338,7 +386,7 @@ export default function GravityScene() {
       }
     );
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
     scene.add(ambientLight);
 
     const directionalLight = new THREE.DirectionalLight(
@@ -440,6 +488,47 @@ export default function GravityScene() {
       }
     };
 
+    const maxScrollValue = 250;
+
+   const onWheel = (event) => {
+  console.log("--- New Wheel Event ---");
+  console.log("event.deltaY:", event.deltaY);
+
+  const scrollSensitivity = 0.5;
+
+  scrollProgress.current += event.deltaY * scrollSensitivity;
+
+  if (scrollProgress.current < 0) {
+    scrollProgress.current = 0;
+  } else if (scrollProgress.current > maxScrollValue) {
+    scrollProgress.current = maxScrollValue;
+  }
+
+  console.log("Acumulated scrollProgress (raw, after limiting):", scrollProgress.current);
+
+  const normalizedRawScrollProgress = scrollProgress.current / maxScrollValue;
+  console.log("Normalized Raw Scroll Progress (0-1):", normalizedRawScrollProgress);
+
+  const normalizedProgress = Math.sin(normalizedRawScrollProgress * Math.PI);
+  console.log("Final normalizedProgress (0 to 1 to 0):", normalizedProgress);
+
+  if (skyMaterialRef.current) {
+    skyMaterialRef.current.uniforms.uProgress.value = normalizedProgress;
+  }
+
+  // AQUI É A MUDANÇA: Verificações mais robustas
+  const currentSunColor = initialSunColor.clone().lerp(targetSunColor, normalizedProgress);
+
+  if (sunLightRef.current && sunLightRef.current.color) { // Adicionei sunLightRef.current.color
+    sunLightRef.current.color.copy(currentSunColor);
+  }
+  if (sunMeshRef.current && sunMeshRef.current.material && sunMeshRef.current.material.emissive) { // Adicionei sunMeshRef.current.material.emissive
+    sunMeshRef.current.material.emissive.copy(currentSunColor);
+  }
+
+  console.log("uProgress value sent to shader:", normalizedProgress);
+  console.log("Current Sun Color (RGB values):", currentSunColor.r, currentSunColor.g, currentSunColor.b);
+};
     const onPointerMove = (event) => {
       if (!selectedObject || !selectedBodyRef.current) return;
       const { clientX, clientY } = getClientCoords(event);
@@ -531,6 +620,7 @@ export default function GravityScene() {
     window.addEventListener("touchstart", onPointerDown, { passive: false });
     window.addEventListener("touchmove", onPointerMove, { passive: false });
     window.addEventListener("touchend", onPointerUp);
+    window.addEventListener("wheel", onWheel);
 
     const showMessage = (text) => {
       if (!messageRef.current) {
@@ -556,7 +646,6 @@ export default function GravityScene() {
         messageRef.current.style.opacity = "0";
       }, 3000);
     };
-    
 
     const animate = () => {
       requestAnimationFrame(animate);
@@ -579,50 +668,48 @@ export default function GravityScene() {
           const distanceToSun = basketBodyRef.current.position.distanceTo(
             new CANNON.Vec3(sun.position.x, sun.position.y, sun.position.z)
           );
-           if (distanceToSun < 1.5) {
-      if (basketMeshRef.current) {
-        scene.remove(basketMeshRef.current);
-        console.log("estou removendo o mesh")
-        console.log(basketMeshRef.current)
-        // ...
-        basketMeshRef.current = null;
-      }
-      if (basketBodyRef.current) {
-        world.removeBody(basketBodyRef.current);
-         console.log("estou removendo o corpo ")
-         console.log(basketBodyRef.current)
-        basketBodyRef.current = null;
-      }
+          if (distanceToSun < 1.5) {
+            if (basketMeshRef.current) {
+              scene.remove(basketMeshRef.current);
+              console.log("estou removendo o mesh");
+              console.log(basketMeshRef.current);
+              basketMeshRef.current = null;
+            }
+            if (basketBodyRef.current) {
+              world.removeBody(basketBodyRef.current);
+              console.log("estou removendo o corpo ");
+              console.log(basketBodyRef.current);
+              basketBodyRef.current = null;
+            }
 
-      currentSunIntensityRef.current += 1;
-      currentSunEmissiveIntensityRef.current += 1;
+            currentSunIntensityRef.current += 1;
+            currentSunEmissiveIntensityRef.current += 1;
 
-      if (sunLightRef.current) {
-        sunLightRef.current.intensity = currentSunIntensityRef.current;
-      }
-      if (sunMeshRef.current && sunMeshRef.current.material) {
-        sunMeshRef.current.material.emissiveIntensity = currentSunEmissiveIntensityRef.current;
-      }
+            if (sunLightRef.current) {
+              sunLightRef.current.intensity = currentSunIntensityRef.current;
+            }
+            if (sunMeshRef.current && sunMeshRef.current.material) {
+              sunMeshRef.current.material.emissiveIntensity =
+                currentSunEmissiveIntensityRef.current;
+            }
 
-     isCreatingBasketRef.current = false;
-      createBasket(); // ✅ Esta linha deve ser chamada com sucesso
+            isCreatingBasketRef.current = false;
+            createBasket();
 
-      // Limpar as maçãs
-      frontBoxes.forEach(({ mesh, body }) => {
-        scene.remove(mesh);
-        world.removeBody(body);
-        if (mesh.geometry) mesh.geometry.dispose();
-        if (mesh.material) {
-          if (Array.isArray(mesh.material)) {
-            mesh.material.forEach(material => material.dispose());
-          } else {
-            mesh.material.dispose();
-          }
-        }
-      });
-      frontBoxes.length = 0;
-      hideMessage();
-    
+            frontBoxes.forEach(({ mesh, body }) => {
+              scene.remove(mesh);
+              world.removeBody(body);
+              if (mesh.geometry) mesh.geometry.dispose();
+              if (mesh.material) {
+                if (Array.isArray(mesh.material)) {
+                  mesh.material.forEach((material) => material.dispose());
+                } else {
+                  mesh.material.dispose();
+                }
+              }
+            });
+            frontBoxes.length = 0;
+            hideMessage();
           }
         }
       }
@@ -637,11 +724,10 @@ export default function GravityScene() {
     };
 
     animate();
-    
 
     return () => {
       if (spawnIntervalRef.current) {
-        clearInterval(spawnIntervalRef.current); // Corrected this line
+        clearInterval(spawnIntervalRef.current);
       }
 
       window.removeEventListener("mousedown", onPointerDown);
@@ -651,6 +737,13 @@ export default function GravityScene() {
       window.removeEventListener("touchstart", onPointerDown);
       window.removeEventListener("touchmove", onPointerMove);
       window.removeEventListener("touchend", onPointerUp);
+      window.removeEventListener("wheel", onWheel);
+
+      if (sky) {
+        scene.remove(sky);
+        sky.geometry.dispose();
+        sky.material.dispose();
+      }
 
       if (
         mountRef.current &&
