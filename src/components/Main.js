@@ -147,7 +147,7 @@ Código:<br />
     },
   ];
 
-  const [modalisOpen, setModalIsOpen] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -294,53 +294,47 @@ Código:<br />
                     className="slide-item"
                   />
                 </button>
-                <Modal
-                  isOpen={modalisOpen}
-                  onRequestClose={closeModal}
-                  overlayClassName="modal-overlay"
-                  className="modal-content"
-                >
-                  {activeItem && (
-                    <div className="modal">
-                      <div className="modal-scroll">
-                        <img
-                          src={activeItem.projectimage}
-                          alt="Imagem do projeto"
-                          className="modal-image"
-                        />
-                        <div
-                          className="modal-text"
-                          dangerouslySetInnerHTML={{ __html: activeItem.text }}
-                        />
-                        {activeItem && (
-                          <div>
-                           
-                            {activeItem.id === "5" &&
-                              (() => {
-                                handleDoubleClick ();
-                              
-                              })()}
-                          
-                            Acesse{" "}
-                            <a
-                              href={activeItem.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              CLICANDO AQUI
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                      <button onClick={closeModal}>Fechar</button>
-                    </div>
-                  )}
-                </Modal>
               </SwiperSlide>
             ))}
           </Swiper>
         )}
       </div>
+
+      {/* Render a single Modal component outside the map function */}
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        overlayClassName="modal-overlay"
+        className="modal-content"
+      >
+        {activeItem && (
+          <div className="modal">
+            <div className="modal-scroll">
+              <img
+                src={activeItem.projectimage}
+                alt="Imagem do projeto"
+                className="modal-image"
+              />
+              <div
+                className="modal-text"
+                dangerouslySetInnerHTML={{ __html: activeItem.text }}
+              />
+              <div>
+                Acesse{" "}
+                <a
+                  href={activeItem.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  CLICANDO AQUI
+                </a>
+              </div>
+            </div>
+            <button onClick={closeModal}>Fechar</button>
+          </div>
+        )}
+      </Modal>
+
       <a href="\GustavoPizenteNazarine25.pdf" download>
         <button>Baixar Currículo</button>
       </a>

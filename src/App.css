@@ -169,7 +169,7 @@ a {
   position: relative;
   flex-direction: column;
   align-items: center;
-  z-index: 20;
+  z-index: 90;
   
 }
 
@@ -179,6 +179,7 @@ a {
   width: 32vh;
   margin: 0px;
   overflow: visible !important;
+  z-index: 90;
 }
 
 button {
@@ -200,6 +201,7 @@ button {
   border: 4px solid white;
   height: 44vh;
   border-radius: 2%;
+  z-index: 90;
 }
 
 .swiper-pagination-bullet {

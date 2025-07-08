@@ -1,3 +1,4 @@
+//Importações
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
@@ -6,7 +7,10 @@ import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 
+//Inicio da Função
+
 export default function GravityScene() {
+  //Use Ref
   const mountRef = useRef(null);
   const loadedModelRef = useRef(null);
   const spawnIntervalRef = useRef(null);
@@ -22,14 +26,20 @@ export default function GravityScene() {
   const scrollProgress = useRef(0);
   const skyMaterialRef = useRef(null);
 
+  //Inicio do UseEffect
   useEffect(() => {
+    //*cria cena 3d
     const scene = new THREE.Scene();
+
+    //define cores da cena
     const bottomSkyColor = new THREE.Color(0xf8f9cc);
     const topSkyColorBlue = new THREE.Color(0xa6d9e0);
-    const topSkyColorPurple = new THREE.Color(0xD5B8DE);
+    const topSkyColorPurple = new THREE.Color(0xd5b8de);
 
     const initialSunColor = new THREE.Color(0xffd700);
-    const targetSunColor = new THREE.Color(0xD5B8DE);
+    const targetSunColor = new THREE.Color(0xd5b8de);
+
+    //cria geometria e material do céu, controi o mesh e adiciona o obejto á cena
 
     const skyGeometry = new THREE.SphereGeometry(60, 32, 32);
     const skyMaterial = new THREE.ShaderMaterial({
@@ -37,7 +47,7 @@ export default function GravityScene() {
         uBottomColor: { value: bottomSkyColor },
         uTopColorBlue: { value: topSkyColorBlue },
         uTopColorPurple: { value: topSkyColorPurple },
-        uProgress: { value: 0.0 }
+        uProgress: { value: 0.0 },
       },
       vertexShader: `
         varying vec3 vWorldPosition;
@@ -66,19 +76,22 @@ export default function GravityScene() {
         }
       `,
       side: THREE.BackSide,
-      depthWrite: false
+      depthWrite: false,
     });
 
     skyMaterialRef.current = skyMaterial;
     const sky = new THREE.Mesh(skyGeometry, skyMaterial);
     scene.add(sky);
 
+    //coloca uma câmera na cena
     const camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
       0.1,
       74
     );
+
+    //inicia o renderizador WebGL e o configura para o canvas
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
@@ -87,14 +100,18 @@ export default function GravityScene() {
       mountRef.current.appendChild(renderer.domElement);
     }
 
+    //cria o mundo físico com Cannon e define a gravidade
+
     const world = new CANNON.World({
       gravity: new CANNON.Vec3(0, -9.81, 0),
     });
 
+    //cria materiais do mundo físico
     const groundMaterial = new CANNON.Material("ground");
     const appleMaterial = new CANNON.Material("apple");
     const basketMaterial = new CANNON.Material("basket");
 
+    //Define o contato entre materias
     const groundAppleContactMaterial = new CANNON.ContactMaterial(
       groundMaterial,
       appleMaterial,
@@ -125,6 +142,7 @@ export default function GravityScene() {
     );
     world.addContactMaterial(basketGroundContactMaterial);
 
+    //cria o corpo físico do chão
     const groundBody = new CANNON.Body({
       type: CANNON.Body.STATIC,
       shape: new CANNON.Plane(),
@@ -134,8 +152,10 @@ export default function GravityScene() {
     groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
     world.addBody(groundBody);
 
+    //representação visual do chão
     const groundGeo = new THREE.PlaneGeometry(150, 100, 1, 100);
 
+    //criação de gradiente com linhas nos eixos
     const blue = new THREE.Color(0xa6d9e0);
     const yellow = new THREE.Color(0xfcfdb4);
 
@@ -174,16 +194,23 @@ export default function GravityScene() {
     ground.receiveShadow = true;
     scene.add(ground);
 
+
+
+
+    //
+
     const frontBoxes = [];
 
-    const BASKET_SCALE_FACTOR = 20;
+    const BASKET_SCALE_FACTOR = 10;
     const wallThicknessMultiplier = 0.4;
     const floorThicknessMultiplier = 0.4;
     const initialBasketPosition = new CANNON.Vec3(
       0,
       groundBody.position.y + 4.5,
-      -5
+      -15
     );
+
+    //carrega imagem da caixa
 
     const createBasket = async () => {
       if (isCreatingBasketRef.current) return;
@@ -199,6 +226,7 @@ export default function GravityScene() {
           BASKET_SCALE_FACTOR
         );
 
+        //calcula do tamanho do modelo do blender
         const bbox = new THREE.Box3().setFromObject(cestoModel);
         const visualModelWidth = bbox.max.x - bbox.min.x;
         const visualModelHeight = bbox.max.y - bbox.min.y;
@@ -206,6 +234,7 @@ export default function GravityScene() {
 
         const actualBasketHeight = visualModelHeight;
 
+        //constroi o corpo da caixa no mundo físico com essas informações
         const newBasketBody = new CANNON.Body({
           mass: 50,
           type: CANNON.Body.DYNAMIC,
@@ -239,6 +268,7 @@ export default function GravityScene() {
           baseRadius - (wallThicknessMultiplier * BASKET_SCALE_FACTOR) / 2;
         const segmentLength = (baseRadius * 2 * Math.PI) / numWallSegments;
 
+        //para criação de cesto circular
         for (let i = 0; i < numWallSegments; i++) {
           const angle = i * angleStep;
           const wallX = Math.cos(angle) * wallRadius;
@@ -264,6 +294,8 @@ export default function GravityScene() {
         basketBodyRef.current = newBasketBody;
         basketMeshRef.current = cestoModel;
 
+
+        //evento de colisão da caixa com a maça
         newBasketBody.addEventListener("collide", (e) => {
           if (e.body.userData && e.body.userData.name === "apple") {
             const appleBody = e.body;
@@ -339,6 +371,9 @@ export default function GravityScene() {
     gridHelperXZ.position.y = -5;
     scene.add(gridHelperXZ);
 
+
+
+    // carrega a maça na cena define seu corpo
     const loader = new GLTFLoader();
     loader.load(
       "/apple.glb",
@@ -358,7 +393,7 @@ export default function GravityScene() {
           }
           const mesh = loadedModelRef.current.clone();
 
-          mesh.position.set(-15, 10, -16);
+          mesh.position.set(-5, 10, -16);
 
           scene.add(mesh);
 
@@ -378,6 +413,7 @@ export default function GravityScene() {
           frontBoxes.push({ mesh, body });
         };
 
+        
         spawnSingleApple();
       },
       undefined,
@@ -385,6 +421,8 @@ export default function GravityScene() {
         console.error("Erro ao carregar o modelo GLTF (apple.glb):", error);
       }
     );
+
+    //iluminação da cena com luz ambiente branca e luz direcional vinda do sol
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
     scene.add(ambientLight);
@@ -406,6 +444,8 @@ export default function GravityScene() {
     scene.add(directionalLight);
     sunLightRef.current = directionalLight;
 
+
+    //criação de forma 3d do sol e posicionamento
     const sunGeometry = new THREE.SphereGeometry(5, 32, 16, 0, Math.PI);
     const sunMaterial = new THREE.MeshBasicMaterial({
       color: 0xfcfdb4,
@@ -430,6 +470,10 @@ export default function GravityScene() {
     const dragStrength = 500;
     const keyboardMoveSpeed = 0.2;
 
+
+
+
+    //evento de coleta de coordenadas
     const getClientCoords = (event) => {
       if (event.touches && event.touches.length > 0) {
         return {
@@ -490,45 +534,70 @@ export default function GravityScene() {
 
     const maxScrollValue = 250;
 
-   const onWheel = (event) => {
-  console.log("--- New Wheel Event ---");
-  console.log("event.deltaY:", event.deltaY);
+    const onWheel = (event) => {
+      console.log("--- New Wheel Event ---");
+      console.log("event.deltaY:", event.deltaY);
 
-  const scrollSensitivity = 0.5;
+      const scrollSensitivity = 0.5;
 
-  scrollProgress.current += event.deltaY * scrollSensitivity;
+      scrollProgress.current += event.deltaY * scrollSensitivity;
 
-  if (scrollProgress.current < 0) {
-    scrollProgress.current = 0;
-  } else if (scrollProgress.current > maxScrollValue) {
-    scrollProgress.current = maxScrollValue;
-  }
+      if (scrollProgress.current < 0) {
+        scrollProgress.current = 0;
+      } else if (scrollProgress.current > maxScrollValue) {
+        scrollProgress.current = maxScrollValue;
+      }
 
-  console.log("Acumulated scrollProgress (raw, after limiting):", scrollProgress.current);
+      console.log(
+        "Acumulated scrollProgress (raw, after limiting):",
+        scrollProgress.current
+      );
 
-  const normalizedRawScrollProgress = scrollProgress.current / maxScrollValue;
-  console.log("Normalized Raw Scroll Progress (0-1):", normalizedRawScrollProgress);
+      const normalizedRawScrollProgress =
+        scrollProgress.current / maxScrollValue;
+      console.log(
+        "Normalized Raw Scroll Progress (0-1):",
+        normalizedRawScrollProgress
+      );
 
-  const normalizedProgress = Math.sin(normalizedRawScrollProgress * Math.PI);
-  console.log("Final normalizedProgress (0 to 1 to 0):", normalizedProgress);
+      const normalizedProgress = Math.sin(
+        normalizedRawScrollProgress * Math.PI
+      );
+      console.log(
+        "Final normalizedProgress (0 to 1 to 0):",
+        normalizedProgress
+      );
 
-  if (skyMaterialRef.current) {
-    skyMaterialRef.current.uniforms.uProgress.value = normalizedProgress;
-  }
+      if (skyMaterialRef.current) {
+        skyMaterialRef.current.uniforms.uProgress.value = normalizedProgress;
+      }
 
-  // AQUI É A MUDANÇA: Verificações mais robustas
-  const currentSunColor = initialSunColor.clone().lerp(targetSunColor, normalizedProgress);
+      
+      const currentSunColor = initialSunColor
+        .clone()
+        .lerp(targetSunColor, normalizedProgress);
 
-  if (sunLightRef.current && sunLightRef.current.color) { // Adicionei sunLightRef.current.color
-    sunLightRef.current.color.copy(currentSunColor);
-  }
-  if (sunMeshRef.current && sunMeshRef.current.material && sunMeshRef.current.material.emissive) { // Adicionei sunMeshRef.current.material.emissive
-    sunMeshRef.current.material.emissive.copy(currentSunColor);
-  }
+      if (sunLightRef.current && sunLightRef.current.color) {
+        
+        sunLightRef.current.color.copy(currentSunColor);
+      }
+      if (
+        sunMeshRef.current &&
+        sunMeshRef.current.material &&
+        sunMeshRef.current.material.emissive
+      ) {
+      
+        sunMeshRef.current.material.emissive.copy(currentSunColor);
+      }
 
-  console.log("uProgress value sent to shader:", normalizedProgress);
-  console.log("Current Sun Color (RGB values):", currentSunColor.r, currentSunColor.g, currentSunColor.b);
-};
+      console.log("uProgress value sent to shader:", normalizedProgress);
+      console.log(
+        "Current Sun Color (RGB values):",
+        currentSunColor.r,
+        currentSunColor.g,
+        currentSunColor.b
+      );
+    };
     const onPointerMove = (event) => {
       if (!selectedObject || !selectedBodyRef.current) return;
       const { clientX, clientY } = getClientCoords(event);
