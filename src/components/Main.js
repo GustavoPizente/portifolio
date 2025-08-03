@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { register } from "swiper/element";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from 'swiper/modules';
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 import "swiper/css/effect-coverflow";
 import Modal from "react-modal";
@@ -277,9 +279,10 @@ Código:<br />
               modifier: 1,
               slidesShadows: true,
             }}
+            navigation ={true}
             pagination={true}
             scrollbar={{ draggable: true }}
-            modules={[EffectCoverflow, Pagination]}
+            modules={[EffectCoverflow, Pagination, Navigation]}
             className="swiper"
           >
             {data.map((item) => (
